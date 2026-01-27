@@ -194,6 +194,12 @@ async def unlock_university(
             detail="University is not locked"
         )
     
+    # Delete all tasks associated with this university
+    db.query(Task).filter(
+        Task.university_id == shortlist_id,
+        Task.user_id == current_user.id
+    ).delete()
+    
     # Unlock the university
     shortlist.status = "SHORTLISTED"
     shortlist.locked_at = None
@@ -239,6 +245,12 @@ async def remove_from_shortlist(
             status_code=400,
             detail="Cannot remove a locked university. Unlock it first."
         )
+    
+    # Delete any associated tasks (safety net for orphaned tasks)
+    db.query(Task).filter(
+        Task.university_id == shortlist_id,
+        Task.user_id == current_user.id
+    ).delete()
     
     db.delete(shortlist)
     db.commit()

@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import { UserProfile } from '../types';
 import { User, LogOut, Save, Shield, Settings, BookOpen, GraduationCap, ChevronRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { useUniversityStore } from '../store/universityStore';
 
 interface ProfileProps {
   user: UserProfile;
@@ -13,6 +14,7 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
   const { profile, updateProfile } = useAuthStore();
+  const { clearSearch } = useUniversityStore();
   const [activeTab, setActiveTab] = useState('personal');
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -97,6 +99,8 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
 
       const result = await updateProfile(backendData);
       console.log('Save result:', result);
+      // Clear cached university search results so Discovery will re-fetch with new profile data
+      clearSearch();
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
@@ -115,108 +119,161 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
 
   return (
     <Layout user={user}>
-      <div className="space-y-10 selection:bg-orange-500 selection:text-white">
+      <div className="space-y-12 selection:bg-orange-500 selection:text-white pb-20">
 
-        {/* Header Area */}
-        <div className="mb-10">
-          <p className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.4em] mb-2">Central Node</p>
-          <h3 className="text-4xl md:text-5xl font-bold text-slate-900 bebas tracking-widest uppercase">PROFILE SETTINGS</h3>
+        <div className="mb-12">
+          <p className="text-[10px] font-black text-orange-500 uppercase tracking-[0.4em] mb-3 opacity-80">Account Settings</p>
+          <h3 className="text-5xl md:text-6xl font-black text-slate-800 bebas tracking-[0.05em] uppercase leading-none">Profile Overview</h3>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-          {/* Navigation */}
-          <div className="space-y-8">
-            <div className="p-10 bg-white border border-slate-100 rounded-[3rem] flex flex-col items-center text-center shadow-sm">
-              <div className="relative mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* Identity & Readiness Overview */}
+          <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-8 mb-4">
+            <div className="glass-panel p-10 bg-white/60 backdrop-blur-md border-white rounded-[3.5rem] flex items-center gap-10 shadow-xl shadow-slate-100/50 group overflow-hidden relative">
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-orange-500/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="relative">
                 <img
                   src={`https://ui-avatars.com/api/?name=${user.fullName}&size=128&background=f97316&color=fff&rounded=true`}
-                  className="w-28 h-28 rounded-[2.5rem] shadow-2xl border-4 border-white"
+                  className="w-32 h-32 rounded-[2.5rem] shadow-2xl border-4 border-white group-hover:scale-105 transition-transform duration-500"
                   alt="Profile"
                 />
-                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-white border border-slate-100 rounded-full flex items-center justify-center text-orange-500 shadow-lg">
-                  <Settings size={20} />
+                <div className="absolute -bottom-2 -right-2 w-11 h-11 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-orange-500 shadow-xl group-hover:rotate-12 transition-all">
+                  <span className="material-symbols-outlined text-[24px]">verified_user</span>
                 </div>
               </div>
-              <h4 className="text-2xl font-bold text-slate-900 bebas tracking-widest uppercase">{user.fullName}</h4>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{formData.intendedDegree || 'Student'}</p>
-              <div className="mt-6">
-                <span className="px-4 py-1.5 bg-emerald-500 text-white rounded-full text-[8px] font-bold uppercase tracking-[0.2em] shadow-lg">
-                  {profile?.onboarding_completed ? 'PROFILE COMPLETE' : 'IN PROGRESS'}
-                </span>
+              <div className="flex-1">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2">Authenticated User</p>
+                <h4 className="text-4xl font-black text-slate-800 bebas tracking-[0.05em] uppercase mb-1 leading-none">{user.fullName}</h4>
+                <p className="text-[12px] text-orange-500 font-black uppercase tracking-[0.2em]">{formData.intendedDegree || 'Protocol Initiated'}</p>
+                <div className="mt-6 flex items-center gap-4">
+                  <span className="material-symbols-outlined text-[18px] text-slate-300">mail</span>
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{user.email}</span>
+                </div>
               </div>
             </div>
 
-            <div className="p-4 bg-white border border-slate-100 rounded-[2.5rem] space-y-2 shadow-sm">
-              {tabs.map(tab => (
+            <div className="glass-panel p-10 bg-white/60 backdrop-blur-md border-white rounded-[3.5rem] flex flex-col justify-between shadow-xl shadow-slate-100/50 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-2 leading-none">Profile Readiness</p>
+                  <h4 className="text-3xl font-black text-slate-800 bebas tracking-[0.1em] uppercase">Readiness Center</h4>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className={`px-5 py-2 ${profile?.onboarding_completed ? 'bg-emerald-500' : 'bg-slate-900'} text-white rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/10`}>
+                    {profile?.onboarding_completed ? 'COMPLETE' : 'IN PROGRESS'}
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Integrity Score</span>
+                  <span className="text-[11px] font-black text-slate-800 uppercase tracking-widest">{profile?.onboarding_completed ? '100%' : '75%'}</span>
+                </div>
+                <div className="w-full h-3 bg-white/50 border border-white rounded-full overflow-hidden shadow-inner p-0.5">
+                  <div
+                    className={`h-full ${profile?.onboarding_completed ? 'bg-emerald-500' : 'bg-orange-500'} rounded-full transition-all duration-1000 ease-out shadow-sm`}
+                    style={{ width: profile?.onboarding_completed ? '100%' : '75%' }}
+                  ></div>
+                </div>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider text-right">Targeting: {formData.fieldOfStudy || 'Not Set'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Sidebar */}
+          <div className="lg:col-span-3 space-y-8">
+            <div className="p-4 bg-white/60 backdrop-blur-md border border-white rounded-[2.5rem] space-y-2 shadow-xl shadow-slate-100/50 relative overflow-hidden">
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-slate-900/5 rounded-full blur-2xl pointer-events-none"></div>
+              {[
+                { id: 'personal', label: 'Candidate Identity', icon: 'person' },
+                { id: 'academic', label: 'Academic Profile', icon: 'school' },
+                { id: 'preferences', label: 'Study Preferences', icon: 'explore' },
+                { id: 'exams', label: 'Exams & Status', icon: 'verified_user' },
+              ].map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center justify-between px-6 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300 ${activeTab === tab.id ? 'bg-slate-900 text-white shadow-xl translate-x-2' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-900'
+                  className={`w-full flex items-center justify-between px-6 py-4.5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 group ${activeTab === tab.id ? 'bg-slate-900 text-white shadow-2xl translate-x-2' : 'text-slate-400 hover:bg-white hover:text-slate-900 hover:shadow-lg'
                     }`}
                 >
                   <div className="flex items-center gap-4">
-                    <tab.icon size={18} strokeWidth={2} />
+                    <span className={`material-symbols-outlined text-[18px] ${activeTab === tab.id ? 'text-orange-500' : 'text-slate-300 group-hover:text-slate-900'} transition-colors`}>
+                      {tab.icon}
+                    </span>
                     {tab.label}
                   </div>
-                  <ChevronRight size={14} className={activeTab === tab.id ? 'opacity-100' : 'opacity-0'} />
+                  <span className={`material-symbols-outlined text-[16px] transition-opacity duration-500 ${activeTab === tab.id ? 'opacity-100' : 'opacity-0'}`}>
+                    chevron_right
+                  </span>
                 </button>
               ))}
-              <div className="pt-6 mt-6 border-t border-slate-50">
+              <div className="pt-6 mt-6 border-t border-white/50 px-2">
                 <button
                   onClick={onLogout}
-                  className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-[10px] font-bold text-red-400 hover:bg-red-50 hover:text-red-600 transition-all uppercase tracking-widest"
+                  className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-[10px] font-black text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 uppercase tracking-[0.2em] shadow-sm hover:shadow-lg"
                 >
-                  <LogOut size={18} /> Sign Out
+                  <span className="material-symbols-outlined text-[18px]">logout</span>
+                  Sign Out Protocol
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="lg:col-span-3">
-            <div className="bg-white border border-slate-100 rounded-[3.5rem] p-10 md:p-14 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50/50 rounded-bl-full pointer-events-none"></div>
+          {/* Content Area */}
+          <div className="lg:col-span-9">
+            <div className="glass-panel p-10 md:p-14 bg-white/60 backdrop-blur-md border-white rounded-[3.5rem] flex flex-col shadow-xl shadow-slate-100/50 relative overflow-hidden h-full">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-slate-100 opacity-20 pointer-events-none rounded-bl-full translate-x-20 -translate-y-20"></div>
 
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16 relative z-10">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-10 mb-16 relative z-10">
                 <div>
-                  <h3 className="text-3xl font-bold text-slate-900 bebas tracking-widest uppercase">{tabs.find(t => t.id === activeTab)?.label}</h3>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">Update your information below</p>
+                  <h3 className="text-4xl font-black text-slate-800 bebas tracking-[0.1em] uppercase leading-none">
+                    {activeTab === 'personal' && 'Personal Information'}
+                    {activeTab === 'academic' && 'Academic History'}
+                    {activeTab === 'preferences' && 'Academic Goals'}
+                    {activeTab === 'exams' && 'Exam Progress'}
+                  </h3>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-3 opacity-60">Optimize your admissions profile</p>
                 </div>
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="px-10 py-4 bg-slate-900 text-white rounded-full font-bold text-[11px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-orange-600 transition-all shadow-2xl active:scale-95 disabled:opacity-70"
+                  className="px-10 py-4.5 btn-gradient text-white rounded-[1.8rem] font-black text-[10px] uppercase tracking-[0.35em] flex items-center justify-center gap-4 hover:-translate-y-1 active:scale-95 transition-all shadow-2xl shadow-orange-500/30 disabled:opacity-70 disabled:translate-y-0"
                 >
-                  {isSaving ? (
-                    <><Loader2 size={18} className="animate-spin" /> Saving...</>
-                  ) : saveSuccess ? (
-                    <><CheckCircle2 size={18} /> Saved!</>
-                  ) : (
-                    <><Save size={18} /> Save Changes</>
-                  )}
+                  <span className={`material-symbols-outlined text-[20px] ${isSaving ? 'animate-spin' : ''}`}>
+                    {isSaving ? 'refresh' : saveSuccess ? 'check_circle' : 'save'}
+                  </span>
+                  <span>{isSaving ? 'Saving Protocol...' : saveSuccess ? 'Changes Saved' : 'Save Changes'}</span>
                 </button>
               </div>
 
-              <div className="relative z-10">
+              <div className="relative z-10 flex-1">
                 {activeTab === 'personal' && (
                   <div className="grid md:grid-cols-2 gap-10">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
-                      <input
-                        type="text"
-                        value={formData.fullName}
-                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
-                      />
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Candidate Full Name</label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={formData.fullName}
+                          onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                          className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] tracking-tight"
+                          placeholder="Loading name..."
+                        />
+                        <span className="material-symbols-outlined absolute right-6 top-1/2 -translate-y-1/2 text-slate-200">badge</span>
+                      </div>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-                      <input
-                        type="email"
-                        disabled
-                        value={formData.email}
-                        className="w-full p-5 bg-slate-100 border border-slate-100 rounded-2xl text-slate-400 cursor-not-allowed font-bold text-sm"
-                      />
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Verified Email Protocol</label>
+                      <div className="relative">
+                        <input
+                          type="email"
+                          disabled
+                          value={formData.email}
+                          className="w-full p-5.5 pl-7 bg-slate-100/50 border border-slate-50 rounded-[1.8rem] text-slate-400 cursor-not-allowed font-black text-[14px] tracking-tight"
+                        />
+                        <span className="material-symbols-outlined absolute right-6 top-1/2 -translate-y-1/2 text-slate-300">verified</span>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -224,30 +281,31 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
                 {activeTab === 'academic' && (
                   <div className="grid md:grid-cols-2 gap-10">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Education Level</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Foundation Level</label>
                       <select
                         value={formData.educationLevel}
                         onChange={(e) => setFormData({ ...formData, educationLevel: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
                       >
-                        <option value="">Select...</option>
+                        <option value="">Select Level...</option>
                         <option value="Bachelors">Bachelor's Degree</option>
                         <option value="Masters">Master's Degree</option>
-                        <option value="PhD">PhD</option>
-                        <option value="High School">High School</option>
+                        <option value="PhD">PhD Doctorate</option>
+                        <option value="High School">High School Diploma</option>
                       </select>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Major/Field</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Operational Major</label>
                       <input
                         type="text"
                         value={formData.major}
                         onChange={(e) => setFormData({ ...formData, major: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px]"
+                        placeholder="e.g. Computer Science"
                       />
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">GPA (0-4.0)</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Academic GPA Scale (4.0 Max)</label>
                       <input
                         type="number"
                         step="0.01"
@@ -255,21 +313,22 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
                         max="4"
                         value={formData.gpa}
                         onChange={(e) => setFormData({ ...formData, gpa: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px]"
+                        placeholder="0.00"
                       />
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Target Degree</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Intended Target Degree</label>
                       <select
                         value={formData.intendedDegree}
                         onChange={(e) => setFormData({ ...formData, intendedDegree: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
                       >
-                        <option value="">Select...</option>
+                        <option value="">Select Degree...</option>
                         <option value="Bachelors">Bachelor's</option>
                         <option value="Masters">Master's</option>
-                        <option value="MBA">MBA</option>
-                        <option value="PhD">PhD</option>
+                        <option value="MBA">MBA Program</option>
+                        <option value="PhD">PhD Protocol</option>
                       </select>
                     </div>
                   </div>
@@ -278,48 +337,47 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
                 {activeTab === 'preferences' && (
                   <div className="grid md:grid-cols-2 gap-10">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Field of Study</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Core Specialization</label>
                       <input
                         type="text"
                         value={formData.fieldOfStudy}
                         onChange={(e) => setFormData({ ...formData, fieldOfStudy: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px]"
+                        placeholder="e.g. AI & Robotics"
                       />
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Funding Type</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Funding Protocol</label>
                       <select
                         value={formData.fundingType}
                         onChange={(e) => setFormData({ ...formData, fundingType: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
                       >
-                        <option value="">Select...</option>
-                        <option value="Self">Self-funded</option>
-                        <option value="Self-funded">Self-funded</option>
+                        <option value="">Select Protocol...</option>
                         <option value="SELF">Self-funded</option>
-                        <option value="Loan">Loan Dependent</option>
-                        <option value="LOAN">Loan</option>
+                        <option value="LOAN">Loan Dependent</option>
                         <option value="AID">Financial Aid</option>
-                        <option value="Scholarship">Scholarship</option>
-                        <option value="Mixed">Mixed Funding</option>
+                        <option value="SCHOLARSHIP">Scholarship Focus</option>
                       </select>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Budget Min ($/year)</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Budget Floor (Annual USD)</label>
                       <input
                         type="number"
                         value={formData.budgetMin}
                         onChange={(e) => setFormData({ ...formData, budgetMin: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px]"
+                        placeholder="20000"
                       />
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Budget Max ($/year)</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Budget Ceiling (Annual USD)</label>
                       <input
                         type="number"
                         value={formData.budgetMax}
                         onChange={(e) => setFormData({ ...formData, budgetMax: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px]"
+                        placeholder="60000"
                       />
                     </div>
                   </div>
@@ -328,21 +386,21 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
                 {activeTab === 'exams' && (
                   <div className="grid md:grid-cols-2 gap-10">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">IELTS Status</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">IELTS Protocol Status</label>
                       <select
                         value={formData.ieltsStatus}
                         onChange={(e) => setFormData({ ...formData, ieltsStatus: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
                       >
-                        <option value="">Select...</option>
-                        <option value="Not started">Not Started</option>
-                        <option value="Preparing">Preparing</option>
-                        <option value="Booked">Exam Booked</option>
-                        <option value="Completed">Completed</option>
+                        <option value="">Status Check...</option>
+                        <option value="Not started">Protocol Pending</option>
+                        <option value="Preparing">Training Mode</option>
+                        <option value="Booked">Target Locked</option>
+                        <option value="Completed">Mission Complete</option>
                       </select>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">IELTS Score</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">IELTS Competency Score</label>
                       <input
                         type="number"
                         step="0.5"
@@ -350,58 +408,59 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
                         max="9"
                         value={formData.ieltsScore}
                         onChange={(e) => setFormData({ ...formData, ieltsScore: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
-                        placeholder="e.g. 7.5"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px]"
+                        placeholder="0.0"
                       />
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">GRE Status</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">GRE Strategic Status</label>
                       <select
                         value={formData.greStatus}
                         onChange={(e) => setFormData({ ...formData, greStatus: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
                       >
-                        <option value="">Select...</option>
-                        <option value="Not started">Not Started</option>
-                        <option value="Preparing">Preparing</option>
-                        <option value="Booked">Exam Booked</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Not Required">Not Required</option>
+                        <option value="">Status Check...</option>
+                        <option value="Not started">Protocol Pending</option>
+                        <option value="Preparing">Training Mode</option>
+                        <option value="Booked">Target Locked</option>
+                        <option value="Completed">Mission Complete</option>
+                        <option value="Not Required">N/A Strategy</option>
                       </select>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">GRE Score</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">GRE Strategic Score</label>
                       <input
                         type="number"
                         min="260"
                         max="340"
                         value={formData.greScore}
                         onChange={(e) => setFormData({ ...formData, greScore: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
-                        placeholder="e.g. 320"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px]"
+                        placeholder="300"
                       />
                     </div>
                     <div className="space-y-4 md:col-span-2">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">SOP Status</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">SOP Narrative Status</label>
                       <select
                         value={formData.sopStatus}
                         onChange={(e) => setFormData({ ...formData, sopStatus: e.target.value })}
-                        className="w-full p-5 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-bold text-slate-900 text-sm"
+                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
                       >
-                        <option value="">Select...</option>
-                        <option value="Not started">Not Started</option>
-                        <option value="Draft">Draft Ready</option>
-                        <option value="Ready">Ready to Submit</option>
+                        <option value="">Status Check...</option>
+                        <option value="Not started">Draft Pending</option>
+                        <option value="Draft">Optimization Mode</option>
+                        <option value="Ready">Deployment Ready</option>
                       </select>
                     </div>
                   </div>
                 )}
               </div>
+              <div className="absolute right-0 bottom-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl -mr-32 -mb-32 pointer-events-none"></div>
             </div>
           </div>
         </div>
       </div>
-    </Layout >
+    </Layout>
   );
 };
 

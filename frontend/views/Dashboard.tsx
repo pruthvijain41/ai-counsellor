@@ -110,133 +110,127 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
 
   return (
     <Layout user={user}>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 selection:bg-orange-500 selection:text-white">
+      <div className="grid grid-cols-12 gap-8 selection:bg-orange-500 selection:text-white">
 
         {/* Left Column */}
-        <div className="lg:col-span-2 space-y-10">
+        <div className="col-span-12 lg:col-span-8 space-y-8">
           {/* Welcome Card */}
-          <div className="p-12 bg-white border border-slate-100 rounded-[3rem] flex items-center justify-between overflow-hidden relative shadow-sm group tour-dashboard">
-            <div className="relative z-10">
-              <p className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.3em] mb-4">Your Dashboard</p>
-              <h3 className="text-5xl font-bold text-slate-900 mb-4 bebas tracking-widest">WELCOME, {user.fullName?.split(' ')[0]?.toUpperCase() || 'STUDENT'}</h3>
-              <p className="text-slate-400 mb-10 max-w-sm text-sm font-medium leading-relaxed">
-                Your admission strategy is {readinessScore}% optimized.
-                {currentStage < 4
-                  ? ` Progress to Stage ${currentStage + 1} by completing your tasks.`
-                  : ' You are in application mode!'}
+          <div className="glass-panel rounded-[2.5rem] p-10 relative overflow-hidden flex flex-col md:flex-row items-center tour-dashboard">
+            <div className="absolute -top-20 -right-20 w-80 h-80 bg-orange-100/50 rounded-full blur-[80px]"></div>
+            <div className="relative z-10 flex-1 space-y-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/60 border border-white rounded-full">
+                <span className="w-1.5 h-1.5 bg-[var(--accent)] rounded-full"></span>
+                <span className="text-[10px] font-bold tracking-widest text-slate-600 uppercase">Status: In Progress</span>
+              </div>
+              <h3 className="text-4xl lg:text-5xl font-display font-extrabold text-slate-800 leading-tight">
+                Welcome, <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500 uppercase bebas">{user.fullName?.split(' ')[0] || 'Applicant'}</span>
+              </h3>
+              <p className="text-slate-600 max-w-sm leading-relaxed text-sm">
+                Your application strength is {readinessScore}%.
+                {currentStage < 4 ? " Follow your roadmap to reach a perfect score." : " Focus on submission protocols."}
               </p>
-              <Link to="/tracker" className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-full font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-orange-600 transition-all shadow-2xl shadow-slate-100 active:scale-95">
-                Execute Checklist <ChevronRight size={14} />
-              </Link>
-            </div>
-            <div className="hidden xl:block absolute -right-16 -top-16 w-80 h-80 bg-orange-50 rounded-full group-hover:scale-105 transition-transform duration-1000"></div>
-            <Zap size={140} className="hidden xl:block absolute right-12 top-1/2 -translate-y-1/2 text-orange-500 opacity-10 group-hover:opacity-20 transition-all duration-700" />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {/* Readiness Widget - Powered by AI Analysis */}
-            <div className="p-8 bg-white border border-slate-100 rounded-[3rem] shadow-sm relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50/50 rounded-bl-[100%] transition-all group-hover:scale-110"></div>
-
-              <div className="relative z-10 flex flex-col h-full justify-between">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h4 className="text-xl font-bold text-slate-900 mb-1 bebas tracking-widest uppercase">PROFILE STRENGTH</h4>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">AI Analysis Protocol</p>
-                  </div>
-                  <div className="w-16 h-16 relative">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={data}
-                          innerRadius={20}
-                          outerRadius={30}
-                          paddingAngle={0}
-                          dataKey="value"
-                          stroke="none"
-                          startAngle={90}
-                          endAngle={-270}
-                        >
-                          {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-bold text-slate-900">{readinessScore}%</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4 mb-6">
-                  {/* Academics */}
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academics</span>
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${profileStrength.label === 'Strong' ? 'bg-emerald-100 text-emerald-600' :
-                      profileStrength.label === 'Average' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
-                      }`}>
-                      {profileStrength.label}
-                    </span>
-                  </div>
-
-                  {/* Exams */}
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Exams</span>
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${profile?.ielts_status === 'Completed' ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'
-                      }`}>
-                      {profile?.ielts_status === 'Completed' ? 'Ready' : 'Pending'}
-                    </span>
-                  </div>
-
-                  {/* SOP */}
-                  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">SOP</span>
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full ${profile?.sop_status === 'Ready' ? 'bg-emerald-100 text-emerald-600' :
-                      profile?.sop_status === 'Draft' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
-                      }`}>
-                      {profile?.sop_status || 'Missing'}
-                    </span>
-                  </div>
-                </div>
-
-                <Link to="/profile" className="w-full py-3 bg-slate-900 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-orange-600 transition-all text-center">
-                  Boost Profile Score
+              <div className="pt-4">
+                <Link to="/tracker" className="inline-flex px-8 py-4 btn-gradient text-white rounded-2xl font-bold items-center gap-3 hover:scale-[1.02] transition-transform shadow-lg text-xs uppercase tracking-widest">
+                  EXECUTE CHECKLIST
+                  <span className="material-symbols-outlined text-xl">arrow_right_alt</span>
                 </Link>
               </div>
             </div>
+            <div className="relative w-48 h-48 lg:w-64 lg:h-64 mt-8 md:mt-0 flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-tr from-orange-200 to-amber-100 rounded-full opacity-30 animate-pulse"></div>
+              <span className="material-symbols-outlined text-[100px] lg:text-[140px] text-orange-400/40 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">auto_awesome</span>
+            </div>
+          </div>
 
-            {/* Stage Tracker */}
-            <div className="p-10 bg-white border border-slate-100 rounded-[3rem] shadow-sm">
-              <div className="flex items-center justify-between mb-8">
-                <h4 className="text-xl font-bold text-slate-900 bebas tracking-widest uppercase">MISSION PHASE</h4>
-                <span className="text-[10px] font-bold text-orange-600 px-4 py-1.5 bg-orange-50 rounded-full uppercase tracking-widest border border-orange-100">Step {currentStage} of 5</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Readiness Widget */}
+            <div className="glass-panel rounded-[2.5rem] p-8 flex flex-col">
+              <div className="flex justify-between items-start mb-8">
+                <div>
+                  <h4 className="font-display font-bold text-lg text-slate-800 uppercase bebas tracking-widest">Profile Strength</h4>
+                  <p className="text-[10px] text-slate-500 tracking-widest font-bold uppercase mt-1">AI Score Engine</p>
+                </div>
+                <div className="relative flex items-center justify-center w-20 h-20">
+                  <svg className="w-20 h-20 transform -rotate-90">
+                    <circle className="text-white/40" cx="40" cy="40" fill="transparent" r="34" stroke="currentColor" strokeWidth="6"></circle>
+                    <circle className="text-[var(--accent)]" cx="40" cy="40" fill="transparent" r="34" stroke="currentColor" strokeDasharray="213.6" strokeDashoffset={`${213.6 * (1 - readinessScore / 100)}`} strokeLinecap="round" strokeWidth="6"></circle>
+                  </svg>
+                  <span className="absolute text-lg font-extrabold text-slate-800">{readinessScore}%</span>
+                </div>
               </div>
-              <div className="flex items-center justify-between gap-3 pt-4">
-                {stages.map((stage, i) => (
-                  <div key={i} className="flex-1">
-                    <div className={`h-2 rounded-full mb-4 transition-all duration-700 ${stage.status === 'completed' ? 'bg-emerald-500 shadow-lg shadow-emerald-100' :
-                      stage.status === 'current' ? 'bg-orange-500 shadow-xl shadow-orange-100 animate-pulse' : 'bg-slate-100'
-                      }`} />
-                    <p className={`text-[9px] font-bold text-center truncate uppercase tracking-[0.15em] ${stage.status === 'current' ? 'text-orange-500' :
-                      stage.status === 'completed' ? 'text-emerald-500' : 'text-slate-300'
-                      }`}>{stage.name}</p>
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-white/50">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Academics</span>
+                  <span className={`text-[9px] px-2.5 py-1 ${profileStrength.label === 'Strong' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-200' : 'bg-orange-500/10 text-orange-600 border-orange-200'} font-bold rounded-lg border uppercase tracking-wider`}>
+                    {profileStrength.label}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-white/50">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Exams</span>
+                  <span className={`text-[9px] px-2.5 py-1 ${profile?.ielts_status === 'Completed' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-200' : 'bg-orange-500/10 text-orange-600 border-orange-200'} font-bold rounded-lg border uppercase tracking-wider`}>
+                    {profile?.ielts_status === 'Completed' ? 'READY' : 'PENDING'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-white/50">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">SOP Status</span>
+                  <span className={`text-[9px] px-2.5 py-1 ${profile?.sop_status === 'Ready' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-200' : 'bg-amber-500/10 text-amber-600 border-amber-200'} font-bold rounded-lg border uppercase tracking-wider`}>
+                    {profile?.sop_status === 'Ready' ? 'READY' : profile?.sop_status === 'Draft' ? 'OPTIMIZING' : 'MISSING'}
+                  </span>
+                </div>
+              </div>
+              <Link to="/profile" className="mt-auto w-full py-4 btn-light-refined text-slate-700 rounded-2xl font-bold text-xs tracking-widest uppercase flex items-center justify-center gap-2">
+                <span className="material-symbols-outlined text-base">bolt</span>
+                Boost Score
+              </Link>
+            </div>
+
+            {/* Mission Tracker */}
+            <div className="glass-panel rounded-[2.5rem] p-8">
+              <div className="flex justify-between items-center mb-10">
+                <h4 className="font-display font-bold text-lg text-slate-800 uppercase bebas tracking-widest">Mission Phase</h4>
+                <span className="text-[10px] px-3 py-1 bg-white/60 border border-white/80 text-[var(--accent)] font-bold rounded-full tracking-widest">PHASE {currentStage} / 5</span>
+              </div>
+              <div className="space-y-6">
+                {stages.slice(0, 3).map((stage, i) => (
+                  <div key={i} className="flex items-center gap-4 relative">
+                    {i < 2 && <div className="absolute left-[11px] top-6 bottom-0 w-[2px] bg-slate-200/50 -z-10"></div>}
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white ${stage.status === 'completed' ? 'bg-emerald-500' : stage.status === 'current' ? 'bg-[var(--accent)] ring-4 ring-orange-100' : 'border-2 border-slate-300 bg-white'}`}>
+                      {stage.status === 'completed' ? (
+                        <span className="material-symbols-outlined text-[14px] font-bold">check</span>
+                      ) : stage.status === 'current' ? (
+                        <span className="w-2 h-2 bg-white rounded-full animate-ping"></span>
+                      ) : null}
+                    </div>
+                    <div>
+                      <p className={`text-xs font-bold ${stage.status === 'completed' ? 'text-slate-400 line-through' : stage.status === 'current' ? 'text-slate-800 tracking-wide' : 'text-slate-500 opacity-40 uppercase'}`}>
+                        {stage.name === 'Profile' ? 'Profile & Strategy' : stage.name === 'Discovery' ? 'Discovery & Shortlist' : 'Application Lock'}
+                      </p>
+                    </div>
                   </div>
                 ))}
+
+                <div className="mt-8 p-5 bg-gradient-to-br from-white/80 to-white/40 border border-white rounded-2xl">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Current Goal</p>
+                  <p className="text-sm font-bold text-slate-700">
+                    {currentStage === 2 ? 'Shortlist Universities' :
+                      currentStage === 3 ? 'Lock Your Targets' :
+                        currentStage === 4 ? 'Complete Applications' : 'Academic Profile Setup'}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Tasks & To-Dos */}
-          <div className="p-12 bg-white border border-slate-100 rounded-[3rem] shadow-sm">
-            <div className="flex items-center justify-between mb-10">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center">
-                  <CheckCircle2 size={24} />
+          {/* Pending Actions */}
+          <div className="glass-panel rounded-[2.5rem] p-8">
+            <div className="flex justify-between items-center mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-orange-100/50 rounded-xl flex items-center justify-center text-[var(--accent)]">
+                  <span className="material-symbols-outlined">checklist</span>
                 </div>
-                <h4 className="text-3xl font-bold text-slate-900 bebas tracking-widest uppercase">APPLICATION CHECKLIST</h4>
+                <h4 className="font-display font-bold text-xl text-slate-800 uppercase bebas tracking-widest">Pending Actions</h4>
               </div>
-              <Link to="/tracker" className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.3em] hover:underline">View All Tasks</Link>
+              <Link to="/tracker" className="text-[10px] font-bold text-[var(--accent)] tracking-widest uppercase hover:opacity-70 transition-opacity">View Checklist</Link>
             </div>
 
             {tasksLoading ? (
@@ -244,41 +238,31 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
                 <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
               </div>
             ) : pendingTasks.length === 0 ? (
-              <div className="text-center py-10">
-                {hasLockedUniversities ? (
-                  <>
-                    <CheckCircle2 size={40} className="mx-auto text-emerald-500 mb-4" />
-                    <p className="text-slate-400 font-medium">All tasks completed! Visit the tracker to generate more.</p>
-                  </>
-                ) : (
-                  <>
-                    <Lock size={40} className="mx-auto text-slate-300 mb-4" />
-                    <p className="text-slate-400 font-medium mb-2">Lock at least one university to unlock application tasks.</p>
-                    <Link to="/shortlist" className="text-orange-500 font-bold text-sm hover:underline">Go to Shortlist →</Link>
-                  </>
-                )}
+              <div className="p-10 text-center bg-white/30 rounded-3xl border border-white border-dashed">
+                <span className="material-symbols-outlined text-4xl text-slate-300 mb-2">task_alt</span>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Protocol Clear</p>
               </div>
             ) : (
-              <div className="space-y-5">
+              <div className="space-y-4">
                 {pendingTasks.map((task) => (
-                  <div key={task.id} className="group p-6 bg-slate-50/50 border border-slate-100 rounded-[2.5rem] flex items-center justify-between hover:bg-white hover:border-orange-200 transition-all duration-500 hover:shadow-xl hover:shadow-slate-100">
-                    <div className="flex items-center gap-6">
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${task.priority === 'HIGH' ? 'bg-red-50 text-red-500' : 'bg-white text-orange-500 shadow-sm border border-slate-100 group-hover:bg-orange-500 group-hover:text-white'
-                        }`}>
-                        {task.priority === 'HIGH' ? <AlertCircle size={24} /> : <Clock size={24} />}
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-slate-900 text-lg tracking-tight mb-1">{task.title}</h5>
-                        <div className="flex items-center gap-3">
-                          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{task.type || 'Task'}</p>
-                          <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
-                          <p className={`text-[9px] font-bold uppercase tracking-widest ${task.priority === 'HIGH' ? 'text-red-500' : 'text-slate-600'}`}>{task.priority}</p>
-                        </div>
+                  <div key={task.id} className="group flex items-center gap-5 p-5 bg-white/30 border border-white hover:border-orange-200 hover:bg-white/60 rounded-2xl transition-all cursor-pointer">
+                    <div className="w-12 h-12 rounded-full border border-white flex items-center justify-center text-orange-400 group-hover:bg-orange-50 transition-colors bg-white shadow-sm">
+                      <span className="material-symbols-outlined">
+                        {task.priority === 'HIGH' ? 'priority_high' : 'description'}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <h5 className="font-bold text-sm text-slate-700">{task.title}</h5>
+                      <div className="flex gap-4 mt-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                          <span className={`w-1 h-1 rounded-full ${task.priority === 'HIGH' ? 'bg-red-400' : 'bg-orange-400'}`}></span> {task.type || 'Task'}
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                          <span className={`w-1 h-1 rounded-full ${task.priority === 'HIGH' ? 'bg-amber-400' : 'bg-blue-400'}`}></span> {task.priority}
+                        </span>
                       </div>
                     </div>
-                    <Link to="/tracker" className="w-12 h-12 flex items-center justify-center text-slate-200 hover:text-emerald-500 transition-colors bg-white rounded-full border border-slate-100 group-hover:border-emerald-200 shadow-sm">
-                      <ChevronRight size={24} />
-                    </Link>
+                    <span className="material-symbols-outlined text-slate-300 group-hover:text-orange-400 transition-all">chevron_right</span>
                   </div>
                 ))}
               </div>
@@ -287,126 +271,86 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         </div>
 
         {/* Right Column */}
-        <div className="space-y-10">
-          {/* Locked Universities */}
-          <div className="p-12 bg-white border border-slate-100 rounded-[3rem] shadow-sm">
-            <h4 className="text-3xl font-bold text-slate-900 bebas tracking-widest mb-10 uppercase">
-              {hasLockedUniversities ? 'LOCKED TARGETS' : 'TOP MATCHES'}
-            </h4>
+        <div className="col-span-12 lg:col-span-4 space-y-8">
+          {/* Locked Targets */}
+          <div className="glass-panel rounded-[2.5rem] p-8">
+            <div className="flex justify-between items-center mb-8">
+              <h4 className="font-display font-bold text-lg text-slate-800 uppercase bebas tracking-widest">Locked Targets</h4>
+              <span className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center border border-emerald-100 uppercase font-black text-[10px]">OK</span>
+            </div>
 
             {shortlistLoading ? (
               <div className="flex items-center justify-center py-10">
                 <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
               </div>
             ) : hasLockedUniversities ? (
-              <div className="space-y-10">
+              <div className="space-y-6 mb-8">
                 {lockedUniversities.map((uni, i) => (
-                  <div key={i} className="flex items-start gap-6 group">
-                    <div className="relative">
-                      <div className="w-16 h-16 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 font-bold bebas text-2xl shadow-lg border border-slate-50">
-                        {uni.university_name.charAt(0)}
-                      </div>
-                      <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center shadow-md text-white">
-                        <Lock size={12} />
+                  <div key={i} className="flex items-center gap-4 p-4 bg-white/30 border border-white rounded-2xl shadow-sm">
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-slate-700 font-extrabold text-xl shadow-sm bebas">
+                      {uni.university_name.charAt(0)}
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                      <h5 className="font-bold text-sm text-slate-800 truncate">{uni.university_name}</h5>
+                      <div className="flex items-center gap-1 text-slate-500 text-[10px] font-bold uppercase tracking-wider">
+                        <span className="material-symbols-outlined text-xs">location_on</span> {uni.country}
                       </div>
                     </div>
-                    <div className="flex-1 min-w-0 pt-1">
-                      <h5 className="font-bold text-slate-900 truncate text-lg tracking-tight mb-1">{uni.university_name}</h5>
-                      <div className="flex items-center gap-2 text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-4">
-                        <MapPin size={12} className="text-orange-500" /> {uni.country}
-                      </div>
-                      <span className="px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-[0.2em] border bg-emerald-50 text-emerald-600 border-emerald-100">
-                        LOCKED
-                      </span>
+                    <div className="flex flex-col items-end">
+                      <span className="text-[8px] font-bold bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded uppercase border border-emerald-200">Verified</span>
                     </div>
                   </div>
                 ))}
-                <Link to="/shortlist" className="block w-full py-5 text-center bg-slate-900 text-white text-[10px] font-bold uppercase tracking-[0.3em] rounded-[1.5rem] hover:bg-orange-600 transition-all shadow-xl shadow-slate-200 mt-4">
-                  Manage Shortlist
-                </Link>
-              </div>
-            ) : hasShortlistedUniversities ? (
-              <div className="space-y-8">
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Your Shortlisted Universities</p>
-                {shortlistedUniversities.map((uni, i) => (
-                  <div key={i} className="flex items-start gap-6 group">
-                    <div className="relative">
-                      <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold bebas text-xl shadow-md border border-slate-50">
-                        {uni.university_name.charAt(0)}
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0 pt-1">
-                      <h5 className="font-bold text-slate-900 truncate tracking-tight mb-1">{uni.university_name}</h5>
-                      <div className="flex items-center gap-2 text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-2">
-                        <MapPin size={10} className="text-orange-500" /> {uni.country}
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest border ${uni.enriched_data?.match_type === 'Dream' ? 'bg-purple-50 text-purple-600 border-purple-100' :
-                        uni.enriched_data?.match_type === 'Safe' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                          'bg-orange-50 text-orange-600 border-orange-100'
-                        }`}>
-                        {uni.enriched_data?.match_type || 'Target'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-                <Link to="/shortlist" className="block w-full py-4 text-center bg-orange-500 text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-[1.5rem] hover:bg-orange-600 transition-all shadow-xl shadow-orange-100 mt-4">
-                  Lock a University to Continue
-                </Link>
               </div>
             ) : (
-              <div className="text-center py-10">
-                <Target size={40} className="mx-auto text-slate-200 mb-4" />
-                <p className="text-slate-400 font-medium mb-4">Discover and shortlist universities to see them here.</p>
-                <Link to="/discover" className="block w-full py-5 text-center bg-slate-900 text-white text-[10px] font-bold uppercase tracking-[0.3em] rounded-[1.5rem] hover:bg-orange-600 transition-all shadow-xl shadow-slate-200">
-                  Launch Discovery Engine
-                </Link>
+              <div className="p-10 text-center bg-white/30 rounded-3xl border border-white border-dashed mb-8">
+                <span className="material-symbols-outlined text-4xl text-slate-200 mb-2">explore</span>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">Discover targets to unlock your application cockpit</p>
               </div>
             )}
+
+            <Link to="/shortlist" className="w-full py-4 btn-light-refined rounded-2xl font-bold text-[10px] tracking-widest text-slate-700 uppercase flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-lg text-orange-400">edit_square</span>
+              Manage Shortlist
+            </Link>
           </div>
 
-          {/* Profile Summary */}
-          <div className="p-12 bg-slate-900 text-white rounded-[3rem] overflow-hidden relative shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900 to-black/50"></div>
-
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-10">
-                <div className="flex items-center gap-3">
-                  <Calendar size={22} className="text-orange-500" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400">PROFILE STATUS</span>
-                </div>
+          {/* Profile Status Status */}
+          <div className="glass-panel rounded-[2.5rem] p-8 relative overflow-hidden">
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-orange-100/30 rounded-full blur-[40px]"></div>
+            <div className="flex items-center gap-3 mb-8 pb-4 border-b border-white/50">
+              <span className="material-symbols-outlined text-[var(--accent)]">data_saver_on</span>
+              <span className="text-[10px] font-extrabold tracking-[0.2em] uppercase text-slate-500">Academic Protocol</span>
+            </div>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center py-4 border-b border-white/30 group">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-800 transition-colors">Target Degree</span>
+                <span className="text-xs font-bold text-slate-800">{profile?.intended_degree || 'NOT SET'}</span>
               </div>
-
-              <div className="space-y-6">
-                <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <span className="text-xs text-slate-400">Target Degree</span>
-                  <span className="text-sm font-bold">{profile?.intended_degree || 'Not Set'}</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <span className="text-xs text-slate-400">Countries</span>
-                  <span className="text-sm font-bold">{profile?.preferred_countries?.length || 0} selected</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <span className="text-xs text-slate-400">Budget</span>
-                  <span className="text-sm font-bold">${profile?.budget_min?.toLocaleString() || 0} - ${profile?.budget_max?.toLocaleString() || 0}</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <span className="text-xs text-slate-400">IELTS</span>
-                  <span className={`text-sm font-bold ${profile?.ielts_status === 'Completed' ? 'text-emerald-400' : 'text-orange-400'}`}>
-                    {profile?.ielts_status || 'Not Started'}
-                  </span>
-                </div>
+              <div className="flex justify-between items-center py-4 border-b border-white/30 group">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-800 transition-colors">Preferences</span>
+                <span className="text-xs font-bold text-slate-800">{profile?.major || 'STEM GENERAL'}</span>
               </div>
-
-              <div className="mt-10 pt-8 border-t border-white/5 flex items-center justify-between">
-                <Trophy size={40} className="text-orange-500 opacity-20" />
-                <div className="text-right">
-                  <p className="text-[8px] font-bold text-slate-500 uppercase tracking-[0.3em] mb-1">Next Goal</p>
-                  <p className="text-xs font-bold text-white tracking-widest bebas uppercase">
-                    {currentStage === 2 ? 'Shortlist Universities' :
-                      currentStage === 3 ? 'Lock Your Targets' :
-                        currentStage === 4 ? 'Complete Applications' : 'Complete Profile'}
-                  </p>
-                </div>
+              <div className="flex justify-between items-center py-4 border-b border-white/30 group">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-800 transition-colors">Budget Range</span>
+                <span className="text-xs font-bold text-slate-800">
+                  {profile?.budget_max ? `$${(profile.budget_min / 1000).toFixed(0)}k – $${(profile.budget_max / 1000).toFixed(0)}k / Yr` : 'NOT SET'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-4 border-b border-white/30 group">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-800 transition-colors">IELTS Rank</span>
+                <span className="text-xs text-emerald-600 font-extrabold flex items-center gap-1.5">
+                  {profile?.ielts_status === 'Completed' ? '8.0' : 'PENDING'} <span className="material-symbols-outlined text-sm">verified_user</span>
+                </span>
+              </div>
+            </div>
+            <div className="mt-8 flex items-center gap-4 p-4 bg-white/60 border border-white rounded-2xl relative">
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                <span className="material-symbols-outlined text-orange-400">trophy</span>
+              </div>
+              <div>
+                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Next Milestone</p>
+                <p className="text-[9px] font-bold text-slate-800 uppercase tracking-wide">Submit Primary Applications</p>
               </div>
             </div>
           </div>

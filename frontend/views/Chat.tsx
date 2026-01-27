@@ -99,41 +99,45 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
 
   return (
     <Layout user={user}>
-      <div className="flex flex-col h-[calc(100vh-12rem)] max-w-5xl mx-auto selection:bg-orange-500 selection:text-white">
+      <div className="flex flex-col h-[calc(100vh-12rem)] max-w-4xl mx-auto selection:bg-orange-500 selection:text-white">
 
         {/* Chat Header Area */}
-        <div className="mb-8 flex items-end justify-between">
+        <div className="mb-4 md:mb-8 flex flex-col items-start gap-4 px-2 md:px-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.4em] mb-2">Your Study Abroad Advisor</p>
-            <h3 className="text-4xl md:text-5xl font-bold text-slate-900 bebas tracking-widest uppercase">AI COUNSELLOR</h3>
+            <p className="text-[9px] md:text-[10px] font-black text-orange-500 uppercase tracking-[0.3em] md:tracking-[0.4em] mb-2 md:mb-3 opacity-80">Your Study Abroad Advisor</p>
+            <h3 className="text-4xl md:text-6xl font-black text-slate-800 bebas tracking-[0.05em] uppercase leading-none">AI Counsellor</h3>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full border border-emerald-100">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest">Llama 3.1 Online</span>
+          <div className="flex items-center gap-3 px-4 py-2 md:px-5 md:py-2.5 bg-white/60 backdrop-blur-md rounded-full border border-white shadow-sm self-start md:self-auto">
+            <div className="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+            <span className="text-[9px] md:text-[10px] font-black text-emerald-600 uppercase tracking-[0.22em]">Llama 3.1 Online</span>
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col bg-white border border-slate-100 rounded-[3rem] shadow-2xl overflow-hidden">
+        <div className="flex-1 flex flex-col bg-white/20 backdrop-blur-sm border border-white rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent pointer-events-none"></div>
+
           {/* Message Area */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-8 md:p-12 space-y-8 scroll-smooth custom-scrollbar bg-slate-50/30">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-12 space-y-6 md:space-y-10 scroll-smooth custom-scrollbar relative z-10">
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`flex gap-5 max-w-[85%] md:max-w-[75%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl flex-shrink-0 flex items-center justify-center text-white shadow-xl ${msg.role === 'user' ? 'bg-slate-900' : 'bg-white border border-slate-100 text-orange-500'}`}>
-                    {msg.role === 'user' ? <User size={20} /> : <Bot size={22} />}
+                <div className={`flex gap-6 max-w-[90%] md:max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`w-12 h-12 rounded-[1.2rem] flex-shrink-0 flex items-center justify-center shadow-xl transition-transform hover:scale-110 ${msg.role === 'user' ? 'bg-white border border-slate-50 text-slate-400' : 'btn-gradient text-white'}`}>
+                    <span className="material-symbols-outlined text-[24px]">
+                      {msg.role === 'user' ? 'person' : 'auto_awesome'}
+                    </span>
                   </div>
-                  <div className={`p-6 md:p-8 rounded-[2rem] text-sm md:text-base leading-relaxed shadow-sm border ${msg.role === 'user'
-                    ? 'bg-slate-900 text-white rounded-tr-none border-slate-900'
-                    : 'bg-white text-slate-800 rounded-tl-none border-slate-100'
+                  <div className={`p-7 md:p-9 rounded-[2.5rem] text-[15px] font-medium leading-relaxed shadow-xl border ${msg.role === 'user'
+                    ? 'btn-gradient text-white rounded-tr-none border-orange-400/20'
+                    : 'bg-white/70 backdrop-blur-md text-slate-700 rounded-tl-none border-white shadow-slate-200/50'
                     }`}>
                     {msg.role === 'assistant' ? (
-                      <div className="prose prose-sm prose-slate max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-h1:text-xl prose-h2:text-lg prose-h3:text-base prose-p:my-2 prose-ul:my-2 prose-li:my-0.5 prose-strong:text-orange-600">
+                      <div className="prose prose-sm prose-slate max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-headings:bebas prose-headings:tracking-widest prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-p:my-3 prose-ul:my-3 prose-li:my-1 prose-strong:text-orange-600 prose-strong:font-black">
                         <ReactMarkdown>
                           {msg.content}
                         </ReactMarkdown>
                       </div>
                     ) : (
-                      msg.content
+                      <span className="tracking-tight">{msg.content}</span>
                     )}
                   </div>
                 </div>
@@ -141,13 +145,13 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="flex gap-5 max-w-[85%]">
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-white border border-slate-100 text-orange-500 flex items-center justify-center shadow-lg">
-                    <Bot size={22} />
+                <div className="flex gap-6 max-w-[85%]">
+                  <div className="w-12 h-12 rounded-[1.2rem] btn-gradient text-white flex items-center justify-center shadow-xl animate-pulse">
+                    <span className="material-symbols-outlined text-[24px]">auto_awesome</span>
                   </div>
-                  <div className="p-6 bg-white border border-slate-100 text-slate-400 rounded-[2rem] rounded-tl-none flex items-center gap-3">
-                    <Loader2 size={18} className="animate-spin text-orange-500" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Processing Logic...</span>
+                  <div className="p-7 bg-white/70 backdrop-blur-md border border-white text-slate-400 rounded-[2.5rem] rounded-tl-none flex items-center gap-4 shadow-xl shadow-slate-100/50">
+                    <span className="material-symbols-outlined animate-spin text-orange-500">refresh</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em]">Processing Logic...</span>
                   </div>
                 </div>
               </div>

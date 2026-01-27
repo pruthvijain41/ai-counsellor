@@ -74,6 +74,10 @@ async def chat_with_counsellor(
         ]
     }
     
+    print(f"DEBUG: Context Shortlist Count: {len(context['shortlisted_universities'])}")
+    if context['shortlisted_universities']:
+        print(f"DEBUG: First shortlist item: {context['shortlisted_universities'][0]}")
+    
     # Process message with AI
     response = await ai_engine.process_message(
         message=chat_request.message,

@@ -247,75 +247,78 @@ const VoiceOnboarding: React.FC<VoiceOnboardingProps> = ({ user, onComplete, onS
     }, [speak, user.fullName]);
 
     return (
-        <div className="min-h-screen bg-white flex items-center justify-center p-8">
-            <div className="max-w-2xl w-full">
+        <div className="min-h-screen relative flex items-center justify-center p-8 overflow-hidden selection:bg-orange-500 selection:text-white">
+            {/* Background Overlay to match Dashboard */}
+            <div className="fixed inset-0 bg-overlay -z-10"></div>
+
+            <div className="max-w-2xl w-full relative z-10">
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div className="w-20 h-20 bg-white/60 border border-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl backdrop-blur-md">
                         <Sparkles className="w-10 h-10 text-orange-500" />
                     </div>
-                    <h1 className="text-4xl font-bold text-slate-900 bebas tracking-widest mb-2">
+                    <h1 className="text-4xl font-bold text-slate-900 bebas tracking-[0.1em] mb-2">
                         AI VOICE ONBOARDING
                     </h1>
-                    <p className="text-slate-400 text-sm font-medium">
+                    <p className="text-slate-500 text-sm font-bold uppercase tracking-widest">
                         Speak your answers or type them below
                     </p>
                 </div>
 
                 {/* Question Card */}
-                <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-100 rounded-[3rem] p-10 shadow-xl mb-8">
+                <div className="glass-panel rounded-[3rem] p-10 shadow-xl mb-8 border border-white/50 relative overflow-hidden">
                     {/* Progress */}
                     <div className="flex items-center gap-2 mb-8">
                         {QUESTIONS.map((_, i) => (
                             <div
                                 key={i}
-                                className={`h-2 flex-1 rounded-full ${i <= currentQuestion ? 'bg-orange-500' : 'bg-slate-100'}`}
+                                className={`h-2 flex-1 rounded-full ${i <= currentQuestion ? 'bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]' : 'bg-white/20'}`}
                             />
                         ))}
                     </div>
 
                     {/* Current Question */}
-                    <div className="mb-8">
+                    <div className="mb-8 relative z-10">
                         <p className="text-[10px] font-bold text-orange-500 uppercase tracking-widest mb-2">
                             Question {currentQuestion + 1} of {QUESTIONS.length}
                         </p>
-                        <h2 className="text-2xl font-bold text-slate-900">
+                        <h2 className="text-2xl font-bold text-slate-900 leading-tight">
                             {QUESTIONS[currentQuestion].question}
                         </h2>
                     </div>
 
                     {/* Speaking/Listening Indicator */}
                     {isSpeaking && (
-                        <div className="flex items-center gap-3 text-orange-500 mb-6">
+                        <div className="flex items-center gap-3 text-orange-500 mb-6 bg-orange-50/50 p-3 rounded-xl border border-orange-100/50 backdrop-blur-sm">
                             <Volume2 className="w-5 h-5 animate-pulse" />
-                            <span className="text-sm font-medium">AI is speaking...</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest">AI is speaking...</span>
                         </div>
                     )}
 
                     {/* Transcript Display */}
                     {transcript && (
-                        <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-6">
-                            <p className="text-slate-700 font-medium">{transcript}</p>
+                        <div className="bg-white/40 border border-white/60 rounded-2xl p-6 mb-6 backdrop-blur-md shadow-sm">
+                            <p className="text-slate-800 font-bold text-sm italic">"{transcript}"</p>
                         </div>
                     )}
 
                     {/* Voice Input */}
-                    <div className="flex items-center gap-4 mb-8">
+                    <div className="flex items-center gap-6 mb-8">
                         <button
                             onClick={isListening ? stopListening : startListening}
                             disabled={isSpeaking || isProcessing}
-                            className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${isListening
-                                    ? 'bg-red-500 text-white animate-pulse'
-                                    : 'bg-orange-500 text-white hover:bg-orange-600'
-                                } disabled:opacity-50`}
+                            className={`w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-xl ${isListening
+                                ? 'bg-red-500 text-white animate-pulse'
+                                : 'bg-orange-500 text-white hover:bg-orange-600 hover:scale-105'
+                                } disabled:opacity-50 disabled:scale-100`}
                         >
-                            {isListening ? <MicOff className="w-8 h-8" /> : <Mic className="w-8 h-8" />}
+                            {isListening ? <MicOff className="w-10 h-10" /> : <Mic className="w-10 h-10" />}
                         </button>
                         <div>
-                            <p className="text-sm font-bold text-slate-900">
+                            <p className="text-sm font-bold text-slate-900 uppercase tracking-wider">
                                 {isListening ? 'Listening...' : 'Click to speak'}
                             </p>
-                            <p className="text-xs text-slate-400">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                                 {isListening ? 'Click again to stop' : 'Or type your answer below'}
                             </p>
                         </div>
@@ -328,13 +331,13 @@ const VoiceOnboarding: React.FC<VoiceOnboardingProps> = ({ user, onComplete, onS
                             value={transcript}
                             onChange={(e) => setTranscript(e.target.value)}
                             placeholder="Type your answer here..."
-                            className="flex-1 p-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/5 focus:border-orange-500"
+                            className="flex-1 p-5 bg-white/40 border border-white/60 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-slate-800 font-bold text-sm placeholder:text-slate-400 backdrop-blur-sm transition-all"
                             disabled={isListening}
                         />
                         <button
                             onClick={() => processAnswer(transcript)}
                             disabled={!transcript || isProcessing}
-                            className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-orange-500 transition-all disabled:opacity-50 flex items-center gap-2"
+                            className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-[0.2em] hover:bg-orange-500 transition-all disabled:opacity-50 flex items-center gap-2 shadow-lg hover:shadow-orange-200"
                         >
                             {isProcessing ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -351,7 +354,7 @@ const VoiceOnboarding: React.FC<VoiceOnboardingProps> = ({ user, onComplete, onS
                 <div className="text-center">
                     <button
                         onClick={onSwitchToForm}
-                        className="text-slate-400 text-sm font-medium hover:text-orange-500 transition-colors"
+                        className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-orange-500 transition-colors bg-white/30 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20"
                     >
                         Prefer typing? Switch to form-based onboarding →
                     </button>

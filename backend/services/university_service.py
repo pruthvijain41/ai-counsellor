@@ -244,34 +244,51 @@ class UniversityService:
         
         for i, uni in enumerate(universities[:20]):
             # Assign match types based on position
-            if i < 3:
-                match_type = "Dream"
-                acceptance = "Low"
-                match_score = 60 + (i * 5)
-            elif i < 10:
-                match_type = "Target"
-                acceptance = "Medium"
-                match_score = 70 + (i % 5) * 3
-            else:
-                match_type = "Safe"
-                acceptance = "High"
-                match_score = 80 + (i % 5) * 2
-            
             # Mock tuition based on country
             country = uni.get("country", "").lower()
-            if "united states" in country:
-                tuition_min, tuition_max = 35000, 65000
-            elif "united kingdom" in country:
-                tuition_min, tuition_max = 20000, 45000
-            elif "canada" in country:
-                tuition_min, tuition_max = 15000, 35000
-            elif "australia" in country:
-                tuition_min, tuition_max = 20000, 40000
-            elif "germany" in country:
-                tuition_min, tuition_max = 500, 15000
-            else:
-                tuition_min, tuition_max = 10000, 30000
             
+            # Add random variation to creating "affordable" options even in expensive countries
+            is_affordable_option = (i % 3 == 0) # Every 3rd university is cheaper
+            
+            if "united states" in country:
+                tuition_min, tuition_max = (12000, 25000) if is_affordable_option else (35000, 65000)
+            elif "united kingdom" in country:
+                tuition_min, tuition_max = (10000, 18000) if is_affordable_option else (20000, 45000)
+            elif "canada" in country:
+                tuition_min, tuition_max = (8000, 14000) if is_affordable_option else (15000, 35000)
+            elif "australia" in country:
+                tuition_min, tuition_max = (15000, 25000) if is_affordable_option else (25000, 45000)
+            elif "germany" in country:
+                tuition_min, tuition_max = 0, 5000
+            else:
+                tuition_min, tuition_max = (5000, 15000) if is_affordable_option else (15000, 30000)
+                
+            # Calculate match score based on budget if profile exists
+            base_score = 70 + (i % 30)  # Random base variation
+            
+            if profile and profile.budget_max > 0:
+                # Penalty for being over budget
+                if tuition_min > profile.budget_max:
+                    over_budget_percent = (tuition_min - profile.budget_max) / profile.budget_max
+                    penalty = min(over_budget_percent * 50, 40) # Max 40 point penalty
+                    base_score -= penalty
+                else:
+                    # Bonus for being well within budget
+                    base_score += 10
+            
+            match_score = int(max(min(base_score, 98), 40)) # Clamp between 40 and 98
+            
+            # Determine match type based on calculated score
+            if match_score >= 85:
+                match_type = "Safe"
+                acceptance = "High"
+            elif match_score >= 70:
+                match_type = "Target"
+                acceptance = "Medium"
+            else:
+                match_type = "Dream"
+                acceptance = "Low"
+
             result.append({
                 "name": uni.get("name"),
                 "country": uni.get("country"),
@@ -290,6 +307,8 @@ class UniversityService:
                 }
             })
         
+        # Sort results by match_score descending to bubble up best fits
+        result.sort(key=lambda x: x["enriched_data"]["match_score"], reverse=True)
         return result
     
     def _get_default_enrichment(self, uni_name: str) -> Dict[str, Any]:
