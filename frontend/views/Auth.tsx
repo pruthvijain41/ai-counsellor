@@ -131,7 +131,7 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
             >
               {isLoading ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" /> Processing...
+                  <Loader2 size={16} className="animate-spin" /> Connecting...
                 </>
               ) : (
                 <>
@@ -139,6 +139,19 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
                 </>
               )}
             </button>
+
+            {/* Cold Start Loading Overlay */}
+            {isLoading && (
+              <div className="mt-6 p-5 bg-orange-50 border border-orange-100 rounded-2xl text-center animate-pulse">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Loader2 size={18} className="animate-spin text-orange-500" />
+                  <span className="text-sm font-bold text-orange-600">Waking up the server...</span>
+                </div>
+                <p className="text-xs text-orange-500/80">
+                  First request may take 30-50 seconds. This is normal for free hosting. ☕
+                </p>
+              </div>
+            )}
 
 
           </form>
