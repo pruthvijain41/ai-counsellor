@@ -8,6 +8,9 @@ export default defineConfig({
     host: '0.0.0.0',
   },
   plugins: [react()],
+  optimizeDeps: {
+    include: ['react-joyride'],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),

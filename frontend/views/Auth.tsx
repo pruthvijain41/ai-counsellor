@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, ArrowRight, Github, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Github, Loader2, GraduationCap } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
+import SmartStrategy from '../components/SmartStrategy';
 
 interface AuthProps {
   mode: 'login' | 'signup';
@@ -166,32 +168,36 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
       </div>
 
       {/* Decorative Side - Matched Landing Aesthetic */}
-      <div className="hidden lg:block w-[45%] bg-slate-900 relative overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1200"
-          className="absolute inset-0 w-full h-full object-cover opacity-30 grayscale"
-          alt="Mountains"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900/80 to-black"></div>
+      <div className="hidden lg:block w-[45%] bg-white relative overflow-hidden border-l border-slate-100">
+        {/* Background Giant Text */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
+          <h1 className="bebas text-[15vw] leading-none text-slate-900 select-none flex flex-col items-center">
+            <span>FUTURE</span>
+            <span>LEARN</span>
+          </h1>
+        </div>
 
         {/* Dynamic Visual Content */}
-        <div className="relative h-full flex flex-col items-center justify-center text-white px-20 text-center">
-          <div className="mb-12 relative">
-            <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-white shadow-2xl flex items-center justify-center relative orange-glow border-[10px] border-orange-500/5 floating">
-              <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 to-transparent rounded-full"></div>
-              <User size={120} className="text-orange-500 drop-shadow-2xl" strokeWidth={1} />
-            </div>
-
-            {/* Accents */}
-            <div className="absolute top-0 -right-4 w-20 h-1 bg-orange-500 rotate-45 rounded-full shadow-lg shadow-orange-500/40"></div>
-            <div className="absolute bottom-0 -left-4 w-20 h-1 bg-orange-500 rotate-45 rounded-full shadow-lg shadow-orange-500/40"></div>
+        <div className="relative h-full flex flex-col items-center justify-center px-10 text-center">
+          <div className="mb-8">
+            <SmartStrategy size="md" />
           </div>
 
-          <h2 className="text-5xl font-bold mb-6 bebas tracking-[0.2em] text-white">ENGINEERED SUCCESS</h2>
-          <p className="text-slate-400 text-xs font-bold uppercase tracking-[0.3em] leading-loose max-w-sm">
-            Access global data networks and precision AI matching to secure your seat at the world's leading universities.
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <h2 className="text-5xl font-bold mb-4 bebas tracking-[0.2em] text-slate-900">ENGINEERED SUCCESS</h2>
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] leading-loose max-w-sm mx-auto">
+              Access global data networks and precision AI matching to secure your seat at the world's leading universities.
+            </p>
+          </motion.div>
         </div>
+
+        {/* Subtle Accents */}
+        <div className="absolute top-10 right-10 w-32 h-32 border border-slate-100 rounded-full opacity-50"></div>
+        <div className="absolute bottom-10 left-10 w-48 h-48 border border-slate-50 rounded-full opacity-50"></div>
       </div>
     </div>
   );

@@ -115,7 +115,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-10">
           {/* Welcome Card */}
-          <div className="p-12 bg-white border border-slate-100 rounded-[3rem] flex items-center justify-between overflow-hidden relative shadow-sm group">
+          <div className="p-12 bg-white border border-slate-100 rounded-[3rem] flex items-center justify-between overflow-hidden relative shadow-sm group tour-dashboard">
             <div className="relative z-10">
               <p className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.3em] mb-4">Your Dashboard</p>
               <h3 className="text-5xl font-bold text-slate-900 mb-4 bebas tracking-widest">WELCOME, {user.fullName?.split(' ')[0]?.toUpperCase() || 'STUDENT'}</h3>

@@ -16,8 +16,10 @@ import {
   X,
   AlertCircle,
   Clock,
-  GraduationCap
+  GraduationCap,
+  HelpCircle
 } from 'lucide-react';
+import AppTour from './AppTour';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -27,6 +29,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children, user }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [runTourManually, setRunTourManually] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuthStore();
@@ -111,6 +114,10 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden selection:bg-orange-500 selection:text-white">
+      <AppTour
+        runManually={runTourManually}
+        onFinish={() => setRunTourManually(false)}
+      />
       {/* Mobile Sidebar Toggle */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -140,6 +147,7 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
                   onClick={() => setIsSidebarOpen(false)}
                   className={({ isActive }) => `
                     flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300
+                    tour-${item.path.replace('/', '')}
                     ${isActive
                       ? 'bg-slate-900 text-white shadow-xl shadow-slate-200'
                       : 'text-slate-400 hover:bg-slate-50 hover:text-slate-900'}
@@ -173,9 +181,16 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
                   signOut();
                   navigate('/');
                 }}
-                className="w-full flex items-center justify-between text-[10px] font-bold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest"
+                className="w-full mb-3 flex items-center justify-between text-[10px] font-bold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest"
               >
                 Sign Out <LogOut size={14} />
+              </button>
+
+              <button
+                onClick={() => setRunTourManually(true)}
+                className="w-full flex items-center justify-between text-[10px] font-bold text-orange-500 hover:text-orange-600 transition-colors uppercase tracking-widest"
+              >
+                Restart Tour <HelpCircle size={14} />
               </button>
             </div>
           </div>
@@ -196,7 +211,7 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
             <div className="relative">
               <button
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                className="relative p-2 text-slate-400 hover:text-orange-500 transition-all"
+                className="relative p-2 text-slate-400 hover:text-orange-500 transition-all tour-notifications"
               >
                 <Bell size={20} />
                 {notifications.length > 0 && (

@@ -58,6 +58,7 @@ class Profile(Base):
     
     # Stage Tracking
     onboarding_completed = Column(Boolean, default=False)
+    has_seen_tour = Column(Boolean, default=False)
     current_stage = Column(String(50), default="PROFILE")  # PROFILE, DISCOVERY, SHORTLIST, LOCKED, APPLICATION
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())

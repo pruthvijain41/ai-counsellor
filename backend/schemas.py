@@ -107,6 +107,7 @@ class ProfileBase(BaseModel):
     gmat_status: Optional[str] = None
     gmat_score: Optional[int] = None
     sop_status: Optional[str] = None
+    has_seen_tour: Optional[bool] = None
 
 class ProfileCreate(ProfileBase):
     pass
@@ -118,6 +119,7 @@ class ProfileResponse(ProfileBase):
     id: UUID
     user_id: UUID
     onboarding_completed: bool
+    has_seen_tour: bool
     current_stage: str
     created_at: datetime
     updated_at: datetime

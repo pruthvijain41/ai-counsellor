@@ -36,6 +36,7 @@ interface Profile {
     // Status
     current_stage: string;
     onboarding_completed: boolean;
+    has_seen_tour: boolean;
 }
 
 interface AuthState {
@@ -55,6 +56,7 @@ interface AuthState {
     fetchProfile: () => Promise<void>;
     updateProfile: (data: Partial<Profile>) => Promise<boolean>;
     completeOnboarding: (data: Record<string, unknown>) => Promise<boolean>;
+    markTourAsSeen: () => Promise<void>;
     clearError: () => void;
     initializeFromStorage: () => Promise<void>;
 }
@@ -272,6 +274,15 @@ export const useAuthStore = create<AuthState>()(
                     console.error('Failed to complete onboarding:', error);
                     set({ isLoading: false });
                     return false;
+                }
+            },
+
+            markTourAsSeen: async () => {
+                try {
+                    const profile = await profileAPI.update({ has_seen_tour: true });
+                    set({ profile });
+                } catch (error) {
+                    console.error('Failed to mark tour as seen:', error);
                 }
             },
 
