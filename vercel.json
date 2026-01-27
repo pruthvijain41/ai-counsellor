@@ -1,12 +1,19 @@
 {
     "version": 2,
-    "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build",
-    "outputDirectory": "frontend/dist",
-    "framework": "vite",
-    "rewrites": [
+    "builds": [
         {
-            "source": "/(.*)",
-            "destination": "/index.html"
+            "src": "frontend/package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "dist",
+                "installCommand": "npm install --legacy-peer-deps"
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/frontend/$1"
         }
     ]
 }
