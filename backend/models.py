@@ -46,11 +46,14 @@ class Profile(Base):
     funding_type = Column(String(50))  # Self-funded, Scholarship, Loan
     
     # Exam Readiness
+    # Exam Readiness
     ielts_status = Column(String(50))  # Not started, Scheduled, Completed
-    ielts_score = Column(Numeric(2, 1))
+    ielts_type = Column(String(20), default="IELTS") # IELTS, TOEFL
+    ielts_score = Column(Numeric(3, 1)) # Changed to (3,1) to allow 10.0 or slightly larger if needed, though IELTS is max 9.0
     toefl_status = Column(String(50))
     toefl_score = Column(Integer)
     gre_status = Column(String(50))
+    gre_type = Column(String(20), default="GRE") # GRE, GMAT
     gre_score = Column(Integer)
     gmat_status = Column(String(50))
     gmat_score = Column(Integer)

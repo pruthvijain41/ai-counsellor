@@ -34,8 +34,10 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
     budgetMax: '',
     fundingType: '',
     ieltsStatus: '',
+    ieltsType: 'IELTS',
     ieltsScore: '',
     greStatus: '',
+    greType: 'GRE',
     greScore: '',
     sopStatus: '',
   });
@@ -44,6 +46,10 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
   useEffect(() => {
     console.log('Profile data received:', profile);
     if (profile) {
+      // Determine effective exam values based on saved type
+      const iType = profile.ielts_type || 'IELTS';
+      const gType = profile.gre_type || 'GRE';
+
       setFormData({
         fullName: user.fullName || '',
         email: user.email || '',
@@ -57,14 +63,31 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
         budgetMin: profile.budget_min?.toString() || '',
         budgetMax: profile.budget_max?.toString() || '',
         fundingType: profile.funding_type || '',
-        ieltsStatus: profile.ielts_status || '',
-        ieltsScore: profile.ielts_score?.toString() || '',
-        greStatus: profile.gre_status || '',
-        greScore: profile.gre_score?.toString() || '',
+
+        // Exam Mapping
+        ieltsType: iType,
+        ieltsStatus: (iType === 'TOEFL' ? profile.toefl_status : profile.ielts_status) || '',
+        ieltsScore: (iType === 'TOEFL' ? profile.toefl_score?.toString() : profile.ielts_score?.toString()) || '',
+
+        greType: gType,
+        greStatus: (gType === 'GMAT' ? profile.gmat_status : profile.gre_status) || '',
+        greScore: (gType === 'GMAT' ? profile.gmat_score?.toString() : profile.gre_score?.toString()) || '',
+
         sopStatus: profile.sop_status || '',
       });
     }
   }, [profile, user.fullName, user.email]);
+
+  const toggleCountry = (country: string) => {
+    setFormData(prev => {
+      const current = prev.preferredCountries;
+      if (current.includes(country)) {
+        return { ...prev, preferredCountries: current.filter(c => c !== country) };
+      }
+      if (current.length >= 3) return prev; // Limit to 3
+      return { ...prev, preferredCountries: [...current, country] };
+    });
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -80,13 +103,32 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
       if (formData.gpa) backendData.gpa = parseFloat(formData.gpa);
       if (formData.intendedDegree) backendData.intended_degree = formData.intendedDegree;
       if (formData.fieldOfStudy) backendData.field_of_study = formData.fieldOfStudy;
+      if (formData.preferredCountries.length > 0) backendData.preferred_countries = formData.preferredCountries;
       if (formData.budgetMin) backendData.budget_min = parseInt(formData.budgetMin);
       if (formData.budgetMax) backendData.budget_max = parseInt(formData.budgetMax);
       if (formData.fundingType) backendData.funding_type = formData.fundingType;
-      if (formData.ieltsStatus) backendData.ielts_status = formData.ieltsStatus;
-      if (formData.ieltsScore) backendData.ielts_score = parseFloat(formData.ieltsScore);
-      if (formData.greStatus) backendData.gre_status = formData.greStatus;
-      if (formData.greScore) backendData.gre_score = parseInt(formData.greScore);
+
+      // Smart Exam Saving
+      if (formData.ieltsType) backendData.ielts_type = formData.ieltsType;
+
+      if (formData.ieltsType === 'TOEFL') {
+        backendData.toefl_status = formData.ieltsStatus || null;
+        backendData.toefl_score = formData.ieltsScore ? parseInt(formData.ieltsScore) : null;
+      } else {
+        backendData.ielts_status = formData.ieltsStatus || null;
+        backendData.ielts_score = formData.ieltsScore ? parseFloat(formData.ieltsScore) : null;
+      }
+
+      if (formData.greType) backendData.gre_type = formData.greType;
+
+      if (formData.greType === 'GMAT') {
+        backendData.gmat_status = formData.greStatus || null;
+        backendData.gmat_score = formData.greScore ? parseInt(formData.greScore) : null;
+      } else {
+        backendData.gre_status = formData.greStatus || null;
+        backendData.gre_score = formData.greScore ? parseInt(formData.greScore) : null;
+      }
+
       if (formData.sopStatus) backendData.sop_status = formData.sopStatus;
 
       console.log('Saving profile data:', backendData);
@@ -360,6 +402,26 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
                         <option value="SCHOLARSHIP">Scholarship Focus</option>
                       </select>
                     </div>
+                    <div className="space-y-4 md:col-span-2">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Preferred Destinations (Max 3)</label>
+                      <div className="flex flex-wrap gap-3">
+                        {['USA', 'UK', 'Canada', 'Australia', 'Germany', 'Ireland', 'Netherlands', 'New Zealand'].map(country => (
+                          <button
+                            key={country}
+                            onClick={() => toggleCountry(country)}
+                            className={`px-5 py-2.5 rounded-[1.2rem] text-[11px] font-black uppercase tracking-wider transition-all border ${formData.preferredCountries.includes(country)
+                              ? 'bg-slate-800 text-white border-slate-800 shadow-lg scale-105'
+                              : 'bg-white/50 text-slate-400 border-slate-100 hover:border-orange-200 hover:text-orange-500'
+                              }`}
+                          >
+                            {country}
+                            {formData.preferredCountries.includes(country) && (
+                              <span className="ml-2 text-orange-500">✓</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                     <div className="space-y-4">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Budget Floor (Annual USD)</label>
                       <input
@@ -386,70 +448,90 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdate }) => {
                 {activeTab === 'exams' && (
                   <div className="grid md:grid-cols-2 gap-10">
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">IELTS Protocol Status</label>
-                      <select
-                        value={formData.ieltsStatus}
-                        onChange={(e) => setFormData({ ...formData, ieltsStatus: e.target.value })}
-                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
-                      >
-                        <option value="">Status Check...</option>
-                        <option value="Not started">Protocol Pending</option>
-                        <option value="Preparing">Training Mode</option>
-                        <option value="Booked">Target Locked</option>
-                        <option value="Completed">Mission Complete</option>
-                      </select>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">English Proficiency Exam</label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <select
+                          value={formData.ieltsType}
+                          onChange={(e) => setFormData({ ...formData, ieltsType: e.target.value })}
+                          className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
+                        >
+                          <option value="IELTS">IELTS</option>
+                          <option value="TOEFL">TOEFL</option>
+                        </select>
+                        <select
+                          value={formData.ieltsStatus}
+                          onChange={(e) => setFormData({ ...formData, ieltsStatus: e.target.value })}
+                          className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
+                        >
+                          <option value="">Status...</option>
+                          <option value="Not started">Not Started</option>
+                          <option value="Preparing">Preparing</option>
+                          <option value="Booked">Booked</option>
+                          <option value="Completed">Completed</option>
+                        </select>
+                      </div>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">IELTS Competency Score</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">{formData.ieltsType} Score {formData.ieltsType === 'IELTS' ? '(0-9)' : '(0-120)'}</label>
                       <input
                         type="number"
-                        step="0.5"
+                        step={formData.ieltsType === 'IELTS' ? "0.5" : "1"}
                         min="0"
-                        max="9"
+                        max={formData.ieltsType === 'IELTS' ? "9" : "120"}
                         value={formData.ieltsScore}
                         onChange={(e) => setFormData({ ...formData, ieltsScore: e.target.value })}
                         className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px]"
-                        placeholder="0.0"
+                        placeholder={formData.ieltsType === 'IELTS' ? "7.5" : "100"}
                       />
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">GRE Strategic Status</label>
-                      <select
-                        value={formData.greStatus}
-                        onChange={(e) => setFormData({ ...formData, greStatus: e.target.value })}
-                        className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
-                      >
-                        <option value="">Status Check...</option>
-                        <option value="Not started">Protocol Pending</option>
-                        <option value="Preparing">Training Mode</option>
-                        <option value="Booked">Target Locked</option>
-                        <option value="Completed">Mission Complete</option>
-                        <option value="Not Required">N/A Strategy</option>
-                      </select>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Aptitude Exam</label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <select
+                          value={formData.greType}
+                          onChange={(e) => setFormData({ ...formData, greType: e.target.value })}
+                          className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
+                        >
+                          <option value="GRE">GRE</option>
+                          <option value="GMAT">GMAT</option>
+                        </select>
+                        <select
+                          value={formData.greStatus}
+                          onChange={(e) => setFormData({ ...formData, greStatus: e.target.value })}
+                          className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
+                        >
+                          <option value="">Status...</option>
+                          <option value="Not started">Not Started</option>
+                          <option value="Preparing">Preparing</option>
+                          <option value="Booked">Booked</option>
+                          <option value="Completed">Completed</option>
+                          <option value="Not Required">Not Required</option>
+                        </select>
+                      </div>
                     </div>
                     <div className="space-y-4">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">GRE Strategic Score</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">{formData.greType} Score {formData.greType === 'GRE' ? '(260-340)' : '(200-800)'}</label>
                       <input
                         type="number"
-                        min="260"
-                        max="340"
+                        min={formData.greType === 'GRE' ? "260" : "200"}
+                        max={formData.greType === 'GRE' ? "340" : "800"}
                         value={formData.greScore}
                         onChange={(e) => setFormData({ ...formData, greScore: e.target.value })}
                         className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px]"
-                        placeholder="300"
+                        placeholder={formData.greType === 'GRE' ? "320" : "700"}
                       />
                     </div>
                     <div className="space-y-4 md:col-span-2">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">SOP Narrative Status</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-1">Statement of Purpose (SOP)</label>
                       <select
                         value={formData.sopStatus}
                         onChange={(e) => setFormData({ ...formData, sopStatus: e.target.value })}
                         className="w-full p-5.5 pl-7 bg-white/50 border border-slate-100 rounded-[1.8rem] outline-none focus:ring-8 focus:ring-orange-500/5 focus:border-orange-500 transition-all font-black text-slate-800 text-[14px] appearance-none"
                       >
                         <option value="">Status Check...</option>
-                        <option value="Not started">Draft Pending</option>
-                        <option value="Draft">Optimization Mode</option>
-                        <option value="Ready">Deployment Ready</option>
+                        <option value="Not started">Not Started</option>
+                        <option value="Draft">Draft</option>
+                        <option value="Ready">Ready</option>
                       </select>
                     </div>
                   </div>

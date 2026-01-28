@@ -228,3 +228,7 @@ INFO:     127.0.0.1:52689 - "GET /api/universities/shortlist HTTP/1.1" 200 OK
 INFO:     127.0.0.1:52689 - "GET /api/universities/shortlist HTTP/1.1" 200 OK
 INFO:     127.0.0.1:52688 - "GET /api/universities/shortlist HTTP/1.1" 200 OK
 INFO:     127.0.0.1:52689 - "GET /api/tasks HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1527]

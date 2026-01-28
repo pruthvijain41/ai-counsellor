@@ -46,27 +46,35 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
   // Calculate readiness score to gate features
   const calculateReadiness = () => {
     let score = 0;
-    const checks = [
-      { field: profile?.education_level, weight: 10 },
-      { field: profile?.major, weight: 10 },
-      { field: profile?.intended_degree, weight: 10 },
-      { field: profile?.preferred_countries?.length, weight: 10 },
-      { field: profile?.budget_max, weight: 10 },
-      { field: profile?.ielts_status === 'Completed', weight: 15 },
-      { field: profile?.gre_status === 'Completed', weight: 10 },
-      { field: profile?.sop_status === 'Ready', weight: 15 },
-      { field: shortlist.filter(s => s.status === 'LOCKED').length > 0, weight: 10 },
-    ];
 
-    checks.forEach(c => {
-      if (c.field) score += c.weight;
-    });
+    // Core fields (50%)
+    if (profile?.education_level) score += 10;
+    if (profile?.major) score += 10;
+    if (profile?.intended_degree) score += 10;
+    if (profile?.preferred_countries?.length) score += 10;
+    if (profile?.budget_max) score += 10;
+
+    // Exams (25%) - Partial credit
+    if (profile?.ielts_status === 'Completed') score += 15;
+    else if (profile?.ielts_status === 'Booked') score += 10;
+    else if (profile?.ielts_status === 'Preparing') score += 5;
+
+    if (profile?.gre_status === 'Completed' || profile?.gre_status === 'Not Required') score += 10;
+    else if (profile?.gre_status === 'Booked') score += 7;
+    else if (profile?.gre_status === 'Preparing') score += 4;
+
+    // SOP (15%) - Partial credit
+    if (profile?.sop_status === 'Ready') score += 15;
+    else if (profile?.sop_status === 'Draft') score += 8;
+
+    // Engagement (10%)
+    if (shortlist.filter(s => s.status === 'LOCKED').length > 0) score += 10;
 
     return Math.min(score, 100);
   };
 
   const readinessScore = calculateReadiness();
-  const isLocked = readinessScore <= 75;
+  const isLocked = readinessScore < 50;
   const lockedPaths = ['/discover', '/shortlist', '/tracker', '/chat'];
 
   // Generate notifications based on app state
@@ -181,7 +189,7 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
               <div>
                 <p className="text-[10px] font-black uppercase tracking-wider text-orange-600 mb-0.5">Access Restricted</p>
                 <p className="text-[9px] font-bold text-slate-600 leading-relaxed">
-                  Complete your profile to <span className="text-orange-600">&gt;75%</span> to unlock AI tools.
+                  Complete your profile to <span className="text-orange-600">&gt;50%</span> to unlock AI tools.
                 </p>
                 <button onClick={() => navigate('/profile')} className="mt-2 text-[9px] font-black uppercase tracking-widest text-orange-500 hover:text-orange-600 flex items-center gap-1">
                   Complete Now <span className="material-symbols-outlined text-[10px]">arrow_forward</span>
@@ -212,7 +220,7 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
 
                   {/* Tooltip on hover */}
                   <div className="absolute left-full ml-4 px-3 py-2 bg-slate-800 text-white text-[9px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
-                    Unlock at 75% Profile
+                    Unlock at 50% Profile
                   </div>
                 </div>
               );

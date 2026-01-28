@@ -490,18 +490,39 @@ This will generate application tasks in your Tracker."
                         if shortlist_entry:
                             shortlist_entry.status = "LOCKED"
                             shortlist_entry.locked_at = datetime.utcnow()
-                            db.commit()
                             
                             # Update profile stage
                             profile = db.query(Profile).filter(Profile.user_id == current_user.id).first()
                             if profile:
                                 profile.current_stage = "APPLICATION"
-                                db.commit()
+                            
+                            # Generate default application tasks (Same as in universities router)
+                            from datetime import timedelta
+                            default_tasks = [
+                                {"title": f"Complete Application Form - {shortlist_entry.university_name}", "type": "FORM", "priority": "HIGH"},
+                                {"title": f"Write Statement of Purpose - {shortlist_entry.university_name}", "type": "SOP", "priority": "HIGH"},
+                                {"title": f"Gather Transcripts & Documents - {shortlist_entry.university_name}", "type": "DOC", "priority": "MEDIUM"},
+                                {"title": f"Request Letters of Recommendation - {shortlist_entry.university_name}", "type": "DOC", "priority": "MEDIUM"},
+                                {"title": f"Pay Application Fee - {shortlist_entry.university_name}", "type": "FORM", "priority": "HIGH"},
+                            ]
+                            
+                            for task_data in default_tasks:
+                                new_task = Task(
+                                    user_id=current_user.id,
+                                    university_id=shortlist_entry.id,
+                                    title=task_data["title"],
+                                    type=task_data["type"],
+                                    priority=task_data["priority"],
+                                    deadline=datetime.utcnow() + timedelta(days=30)
+                                )
+                                db.add(new_task)
+
+                            db.commit()
                             
                             results.append({
                                 "action": "lock",
                                 "success": True,
-                                "message": f"Locked {shortlist_entry.university_name} for application"
+                                "message": f"Locked {shortlist_entry.university_name} for application and generated checklist tasks"
                             })
                         else:
                             results.append({

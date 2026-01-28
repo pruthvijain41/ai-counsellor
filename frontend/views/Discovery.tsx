@@ -35,7 +35,8 @@ interface DisplayUniversity {
   description: string;
   requirements: { gpa: string; test: string };
   webPages?: string[];
-  originalData?: unknown;
+  detailedAnalysis: string;
+  tier: string;
 }
 
 const Discovery: React.FC<DiscoveryProps> = ({ user }) => {
@@ -97,7 +98,9 @@ const Discovery: React.FC<DiscoveryProps> = ({ user }) => {
       description: enriched?.why_fits || 'Visit the university website for more information.',
       requirements: { gpa: '3.0+', test: 'Varies' },
       webPages: uni.web_pages,
-      originalData: uni
+      originalData: uni,
+      detailedAnalysis: enriched?.admission_analysis || `Based on our analysis, ${uni.name} presents a strong opportunity, though admission is competitive.`,
+      tier: enriched?.match_tier || 'TIER 2 PRIME'
     };
   });
 
@@ -311,18 +314,17 @@ const Discovery: React.FC<DiscoveryProps> = ({ user }) => {
                         </div>
                       </div>
                       <p className="text-slate-700 leading-relaxed text-lg font-bold relative z-10 max-w-2xl">
-                        Based on your current trajectory, <span className="text-slate-900 underline decoration-orange-500/30 decoration-4 underline-offset-4">your profile aligns optimally</span> with {selectedUni.name}'s research-heavy admission cycle.
-                        We recommend emphasizing your interdisciplinary projects.
+                        {selectedUni.detailedAnalysis}
                       </p>
                       <div className="mt-10 flex items-center gap-8 relative z-10">
                         <div className="flex flex-col">
                           <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Probability Fit</span>
-                          <span className="text-3xl font-black text-[var(--accent)] bebas tracking-wide">94.8% OPTIMAL</span>
+                          <span className="text-3xl font-black text-[var(--accent)] bebas tracking-wide">{selectedUni.ranking}% OPTIMAL</span>
                         </div>
                         <div className="w-[1px] h-10 bg-slate-200"></div>
                         <div className="flex flex-col">
                           <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Profile Strength</span>
-                          <span className="text-3xl font-black text-slate-800 bebas tracking-wide">TIER 1 ELITE</span>
+                          <span className="text-3xl font-black text-slate-800 bebas tracking-wide">{selectedUni.tier}</span>
                         </div>
                       </div>
                     </div>

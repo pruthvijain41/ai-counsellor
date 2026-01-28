@@ -14,8 +14,16 @@ export interface UserProfile {
   budgetMax: string;
   funding: string;
   exams: string[];
-  scores: Record<string, string>;
-  isOnboarded: boolean;
+  ielts_type?: 'IELTS' | 'TOEFL';
+  ielts_score?: number;
+  toefl_status?: string;
+  toefl_score?: number;
+  gre_status?: string;
+  gre_type?: 'GRE' | 'GMAT';
+  gre_score?: number;
+  gmat_status?: string;
+  gmat_score?: number;
+  sop_status?: string;
 }
 
 export interface University {

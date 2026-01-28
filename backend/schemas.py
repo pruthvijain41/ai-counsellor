@@ -99,10 +99,12 @@ class ProfileBase(BaseModel):
     
     # Exam Readiness
     ielts_status: Optional[str] = None
+    ielts_type: Optional[str] = None
     ielts_score: Optional[float] = None
     toefl_status: Optional[str] = None
     toefl_score: Optional[int] = None
     gre_status: Optional[str] = None
+    gre_type: Optional[str] = None
     gre_score: Optional[int] = None
     gmat_status: Optional[str] = None
     gmat_score: Optional[int] = None
@@ -180,8 +182,10 @@ class CompleteOnboarding(BaseModel):
     funding_type: str
     # Exams
     ielts_status: str
+    ielts_type: Optional[str] = "IELTS"
     ielts_score: Optional[float] = None
     gre_status: Optional[str] = None
+    gre_type: Optional[str] = "GRE"
     gre_score: Optional[int] = None
     sop_status: str
 

@@ -10,6 +10,8 @@ interface EnrichedData {
     risk_level: string;
     why_fits: string;
     risks: string;
+    admission_analysis?: string;
+    match_tier?: string;
 }
 
 interface University {

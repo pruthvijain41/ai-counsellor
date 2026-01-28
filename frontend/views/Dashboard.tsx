@@ -40,21 +40,29 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   // Calculate real readiness score based on profile
   const calculateReadiness = () => {
     let score = 0;
-    const checks = [
-      { field: profile?.education_level, weight: 10 },
-      { field: profile?.major, weight: 10 },
-      { field: profile?.intended_degree, weight: 10 },
-      { field: profile?.preferred_countries?.length, weight: 10 },
-      { field: profile?.budget_max, weight: 10 },
-      { field: profile?.ielts_status === 'Completed', weight: 15 },
-      { field: profile?.gre_status === 'Completed', weight: 10 },
-      { field: profile?.sop_status === 'Ready', weight: 15 },
-      { field: shortlist.filter(s => s.status === 'LOCKED').length > 0, weight: 10 },
-    ];
 
-    checks.forEach(c => {
-      if (c.field) score += c.weight;
-    });
+    // Core fields (50%)
+    if (profile?.education_level) score += 10;
+    if (profile?.major) score += 10;
+    if (profile?.intended_degree) score += 10;
+    if (profile?.preferred_countries?.length) score += 10;
+    if (profile?.budget_max) score += 10;
+
+    // Exams (25%) - Partial credit
+    if (profile?.ielts_status === 'Completed') score += 15;
+    else if (profile?.ielts_status === 'Booked') score += 10;
+    else if (profile?.ielts_status === 'Preparing') score += 5;
+
+    if (profile?.gre_status === 'Completed' || profile?.gre_status === 'Not Required') score += 10;
+    else if (profile?.gre_status === 'Booked') score += 7;
+    else if (profile?.gre_status === 'Preparing') score += 4;
+
+    // SOP (15%) - Partial credit
+    if (profile?.sop_status === 'Ready') score += 15;
+    else if (profile?.sop_status === 'Draft') score += 8;
+
+    // Engagement (10%)
+    if (shortlist.filter(s => s.status === 'LOCKED').length > 0) score += 10;
 
     return Math.min(score, 100);
   };
@@ -100,13 +108,85 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   const hasShortlistedUniversities = shortlistedUniversities.length > 0;
 
   // Profile strength assessment
+  // Profile strength assessment
   const getProfileStrength = () => {
-    if (readinessScore >= 70) return { label: 'Strong', color: 'text-emerald-500' };
-    if (readinessScore >= 40) return { label: 'Average', color: 'text-orange-500' };
-    return { label: 'Needs Work', color: 'text-red-500' };
+    // Robust GPA check - handle strings, zeros, and different scales
+    const gpaRaw = profile?.gpa;
+    const gpa = Number(gpaRaw);
+
+    // Only use GPA if it's a valid positive number
+    if (!isNaN(gpa) && gpa > 0) {
+      // Normalize different scales to 4.0
+      let normalizedGpa = gpa;
+      if (gpa > 4.0 && gpa <= 10.0) normalizedGpa = (gpa / 10.0) * 4.0;
+      else if (gpa > 10.0 && gpa <= 100.0) normalizedGpa = (gpa / 100.0) * 4.0;
+
+      if (normalizedGpa >= 3.5) return { label: 'Strong', color: 'text-emerald-500' };
+      if (normalizedGpa >= 2.5) return { label: 'Average', color: 'text-orange-500' };
+      return { label: 'Needs Work', color: 'text-red-500' };
+    }
+
+    // Explicitly handle missing GPA
+    return { label: 'Set GPA', color: 'text-slate-400' };
   };
 
   const profileStrength = getProfileStrength();
+
+  // Exam strength assessment
+  const getExamStrength = () => {
+    // English Scores
+    let englishStatus = 'PENDING';
+    const isToefl = profile?.ielts_type === 'TOEFL';
+    const englishCompleted = (isToefl ? profile?.toefl_status : profile?.ielts_status) === 'Completed';
+    const englishScore = Number(isToefl ? profile?.toefl_score : profile?.ielts_score) || 0;
+
+    if (englishCompleted && englishScore > 0) {
+      if (isToefl) {
+        if (englishScore >= 100) englishStatus = 'STRONG';
+        else if (englishScore >= 80) englishStatus = 'READY';
+        else englishStatus = 'IMPROVE';
+      } else {
+        if (englishScore >= 7.5) englishStatus = 'STRONG';
+        else if (englishScore >= 6.5) englishStatus = 'READY';
+        else englishStatus = 'IMPROVE';
+      }
+    }
+
+    // Aptitude Scores
+    let aptitudeStatus = 'PENDING';
+    const isGmat = profile?.gre_type === 'GMAT';
+    const aptitudeCompleted = (isGmat ? profile?.gmat_status : profile?.gre_status) === 'Completed';
+    const aptitudeNotRequired = (isGmat ? profile?.gmat_status : profile?.gre_status) === 'Not Required';
+    const aptitudeScore = Number(isGmat ? profile?.gmat_score : profile?.gre_score) || 0;
+
+    if (aptitudeNotRequired) aptitudeStatus = 'READY';
+    else if (aptitudeCompleted && aptitudeScore > 0) {
+      if (isGmat) {
+        if (aptitudeScore >= 650) aptitudeStatus = 'STRONG';
+        else if (aptitudeScore >= 550) aptitudeStatus = 'READY';
+        else aptitudeStatus = 'IMPROVE';
+      } else {
+        if (aptitudeScore >= 320) aptitudeStatus = 'STRONG';
+        else if (aptitudeScore >= 300) aptitudeStatus = 'READY';
+        else aptitudeStatus = 'IMPROVE';
+      }
+    }
+
+    // Aggregate Logic
+    if (englishStatus === 'IMPROVE' || aptitudeStatus === 'IMPROVE') {
+      return { label: 'NEEDS WORK', color: 'text-red-600', bg: 'bg-red-500/10', border: 'border-red-200' };
+    }
+    if (englishStatus === 'STRONG' && (aptitudeStatus === 'STRONG' || aptitudeStatus === 'PENDING' || aptitudeStatus === 'READY')) {
+      return { label: 'EXCELLENT', color: 'text-emerald-600', bg: 'bg-emerald-500/10', border: 'border-emerald-200' };
+    }
+    if (englishStatus === 'READY' || aptitudeStatus === 'READY') {
+      return { label: 'READY', color: 'text-emerald-600', bg: 'bg-emerald-500/10', border: 'border-emerald-200' };
+    }
+
+    return { label: 'PENDING', color: 'text-orange-600', bg: 'bg-orange-500/10', border: 'border-orange-200' };
+  };
+
+  const examStrength = getExamStrength();
 
   return (
     <Layout user={user}>
@@ -161,14 +241,20 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
               <div className="space-y-3 mb-8">
                 <div className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-white/50">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Academics</span>
-                  <span className={`text-[9px] px-2.5 py-1 ${profileStrength.label === 'Strong' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-200' : 'bg-orange-500/10 text-orange-600 border-orange-200'} font-bold rounded-lg border uppercase tracking-wider`}>
+                  <span className={`text-[9px] px-2.5 py-1 ${profileStrength.label === 'Strong' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-200' :
+                    profileStrength.label === 'Average' ? 'bg-orange-500/10 text-orange-600 border-orange-200' :
+                      profileStrength.label === 'Set GPA' ? 'bg-slate-500/10 text-slate-600 border-slate-200' :
+                        'bg-red-500/10 text-red-600 border-red-200'
+                    } font-bold rounded-lg border uppercase tracking-wider`}>
                     {profileStrength.label}
                   </span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-white/50">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Exams</span>
-                  <span className={`text-[9px] px-2.5 py-1 ${profile?.ielts_status === 'Completed' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-200' : 'bg-orange-500/10 text-orange-600 border-orange-200'} font-bold rounded-lg border uppercase tracking-wider`}>
-                    {profile?.ielts_status === 'Completed' ? 'READY' : 'PENDING'}
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    Exams
+                  </span>
+                  <span className={`text-[9px] px-2.5 py-1 ${examStrength.bg} ${examStrength.color} ${examStrength.border} font-bold rounded-lg border uppercase tracking-wider`}>
+                    {examStrength.label}
                   </span>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-white/50">
@@ -338,9 +424,23 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
                 </span>
               </div>
               <div className="flex justify-between items-center py-4 border-b border-white/30 group">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-800 transition-colors">IELTS Rank</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-800 transition-colors">
+                  {profile?.ielts_type || 'IELTS'} Score
+                </span>
                 <span className="text-xs text-emerald-600 font-extrabold flex items-center gap-1.5">
-                  {profile?.ielts_status === 'Completed' ? '8.0' : 'PENDING'} <span className="material-symbols-outlined text-sm">verified_user</span>
+                  {(profile?.ielts_type === 'TOEFL' ? profile.toefl_status : profile?.ielts_status) === 'Completed'
+                    ? (profile?.ielts_type === 'TOEFL' ? profile.toefl_score : profile.ielts_score)
+                    : 'PENDING'} <span className="material-symbols-outlined text-sm">verified_user</span>
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-4 border-b border-white/30 group">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-800 transition-colors">
+                  {profile?.gre_type || 'GRE'} Score
+                </span>
+                <span className="text-xs text-emerald-600 font-extrabold flex items-center gap-1.5">
+                  {(profile?.gre_type === 'GMAT' ? profile.gmat_status : profile?.gre_status) === 'Completed'
+                    ? (profile?.gre_type === 'GMAT' ? profile.gmat_score : profile.gre_score)
+                    : 'PENDING'} <span className="material-symbols-outlined text-sm">verified_user</span>
                 </span>
               </div>
             </div>

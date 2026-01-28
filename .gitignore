@@ -33,3 +33,5 @@ Thumbs.db
 
 # Local artifacts
 .gemini/
+.vercel
+.env*.local

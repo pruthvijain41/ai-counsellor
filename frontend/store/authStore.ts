@@ -29,9 +29,15 @@ interface Profile {
     funding_type: string | null;
     // Exams
     ielts_status: string | null;
+    ielts_type: 'IELTS' | 'TOEFL' | null;
     ielts_score: number | null;
+    toefl_status: string | null;
+    toefl_score: number | null;
     gre_status: string | null;
+    gre_type: 'GRE' | 'GMAT' | null;
     gre_score: number | null;
+    gmat_status: string | null;
+    gmat_score: number | null;
     sop_status: string | null;
     // Status
     current_stage: string;
