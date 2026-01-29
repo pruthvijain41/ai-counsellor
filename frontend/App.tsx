@@ -13,6 +13,7 @@ import Profile from './views/Profile';
 import { useAuthStore } from './store/authStore';
 import { supabase } from './lib/supabase';
 import { Loader2 } from 'lucide-react';
+import MobileBlocker from './components/MobileBlocker';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode; requireOnboarding?: boolean }> = ({
@@ -103,75 +104,69 @@ const App: React.FC = () => {
 
   return (
     <HashRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={
-          isLoading ? (
-            <div className="min-h-screen flex items-center justify-center bg-white">
-              <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-            </div>
-          ) : isAuthenticated ? <Navigate to="/dashboard" replace /> : <Auth mode="login" />
-        } />
-        <Route path="/signup" element={
-          isLoading ? (
-            <div className="min-h-screen flex items-center justify-center bg-white">
-              <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-            </div>
-          ) : isAuthenticated ? <Navigate to="/onboarding" replace /> : <Auth mode="signup" />
-        } />
+      <MobileBlocker>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={
+            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Auth mode="login" />
+          } />
+          <Route path="/signup" element={
+            isAuthenticated ? <Navigate to="/onboarding" replace /> : <Auth mode="signup" />
+          } />
 
-        {/* Onboarding - needs auth but NOT if already completed */}
-        <Route path="/onboarding" element={
-          <ProtectedRoute requireOnboarding={false}>
-            {profile?.onboarding_completed ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              user && <OnboardingSelector user={user} onComplete={handleOnboardingComplete} />
-            )}
-          </ProtectedRoute>
-        } />
+          {/* Onboarding - needs auth but NOT if already completed */}
+          <Route path="/onboarding" element={
+            <ProtectedRoute requireOnboarding={false}>
+              {profile?.onboarding_completed ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                user && <OnboardingSelector user={user} onComplete={handleOnboardingComplete} />
+              )}
+            </ProtectedRoute>
+          } />
 
-        {/* Protected Routes - require auth and onboarding */}
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            {user && <Dashboard user={user} />}
-          </ProtectedRoute>
-        } />
+          {/* Protected Routes - require auth and onboarding */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              {user && <Dashboard user={user} />}
+            </ProtectedRoute>
+          } />
 
-        <Route path="/discover" element={
-          <ProtectedRoute>
-            {user && <Discovery user={user} />}
-          </ProtectedRoute>
-        } />
+          <Route path="/discover" element={
+            <ProtectedRoute>
+              {user && <Discovery user={user} />}
+            </ProtectedRoute>
+          } />
 
-        <Route path="/shortlist" element={
-          <ProtectedRoute>
-            {user && <Shortlist user={user} />}
-          </ProtectedRoute>
-        } />
+          <Route path="/shortlist" element={
+            <ProtectedRoute>
+              {user && <Shortlist user={user} />}
+            </ProtectedRoute>
+          } />
 
-        <Route path="/tracker" element={
-          <ProtectedRoute>
-            {user && <Tracker user={user} />}
-          </ProtectedRoute>
-        } />
+          <Route path="/tracker" element={
+            <ProtectedRoute>
+              {user && <Tracker user={user} />}
+            </ProtectedRoute>
+          } />
 
-        <Route path="/chat" element={
-          <ProtectedRoute>
-            {user && <Chat user={user} />}
-          </ProtectedRoute>
-        } />
+          <Route path="/chat" element={
+            <ProtectedRoute>
+              {user && <Chat user={user} />}
+            </ProtectedRoute>
+          } />
 
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            {user && <Profile user={user} onLogout={signOut} onUpdate={handleProfileUpdate} />}
-          </ProtectedRoute>
-        } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              {user && <Profile user={user} onLogout={signOut} onUpdate={handleProfileUpdate} />}
+            </ProtectedRoute>
+          } />
 
-        {/* Catch-all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </MobileBlocker>
     </HashRouter>
   );
 };

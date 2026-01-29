@@ -10,6 +10,43 @@ interface AuthProps {
   mode: 'login' | 'signup';
 }
 
+const loadingFacts = [
+  "Waking up the AI Core... This usually takes 45 seconds on the free tier.",
+  "Did you know? Students using AI apply to 30% more scholarships.",
+  "Establishing secure handshake with the global university database.",
+  "Calculating match probabilities for 4,000+ institutions.",
+  "Almost there! The server is warming up for your session.",
+  "Did you know? Germany offers tuition-free education at public universities for all international students.",
+  "Did you know? Canada's PGWP allows you to work for up to 3 years after graduating.",
+  "Did you know? The UK’s Graduate Route visa lets you stay for 2 years after your degree.",
+  "Did you know? International students contribute over $40 billion annually to the US economy.",
+  "Did you know? Australia has some of the world's most student-friendly cities like Melbourne.",
+  "Did you know? AI Counsellor analyzes your profile against 4,000+ institutions in seconds."
+];
+
+const LoadingMessage = () => {
+  const [index, setIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % loadingFacts.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <motion.p
+      key={index}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      className="text-xs text-slate-600 leading-relaxed font-medium transition-all"
+    >
+      {loadingFacts[index]}
+    </motion.p>
+  );
+};
+
 const Auth: React.FC<AuthProps> = ({ mode }) => {
   const navigate = useNavigate();
   const { signIn, signUp, isLoading, error, clearError } = useAuthStore();
@@ -48,10 +85,10 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
   return (
     <div className="min-h-screen flex items-stretch bg-white selection:bg-orange-500 selection:text-white font-sans">
       {/* Form Side */}
-      <div className="flex-1 flex flex-col justify-center px-10 md:px-24 py-20">
+      <div className="flex-1 flex flex-col justify-center px-10 md:px-24 py-10">
         <div className="max-w-md w-full mx-auto">
-          <div className="mb-12 text-center md:text-left">
-            <Link to="/" className="inline-flex items-center gap-1 mb-16">
+          <div className="mb-6 text-center md:text-left">
+            <Link to="/" className="inline-flex items-center gap-1 mb-8">
               <span className="text-orange-500 font-bold text-3xl bebas tracking-tighter">AI</span>
               <span className="text-slate-900 font-bold text-3xl bebas tracking-tighter">COUNSELLOR</span>
             </Link>
@@ -71,9 +108,9 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'signup' && (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
                 <div className="relative">
                   <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
@@ -83,14 +120,14 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                     placeholder="Enter your name"
-                    className="w-full pl-14 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-900"
+                    className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-900"
                     disabled={isLoading}
                   />
                 </div>
               </div>
             )}
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
@@ -100,13 +137,13 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="name@gmail.com"
-                  className="w-full pl-14 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-900"
+                  className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-900"
                   disabled={isLoading}
                 />
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Secure Password</label>
                 {mode === 'login' && <a href="#" className="text-[10px] text-orange-500 font-bold uppercase tracking-widest hover:underline">Reset?</a>}
@@ -120,7 +157,7 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="••••••••"
-                  className="w-full pl-14 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-900"
+                  className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-900"
                   disabled={isLoading}
                 />
               </div>
@@ -129,7 +166,7 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-5 bg-slate-900 text-white rounded-full font-bold text-[11px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-orange-600 transition-all shadow-2xl shadow-slate-200 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full py-4 bg-slate-900 text-white rounded-full font-bold text-[11px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-orange-600 transition-all shadow-2xl shadow-slate-200 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
@@ -142,23 +179,60 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
               )}
             </button>
 
-            {/* Cold Start Loading Overlay */}
+            {/* Enhanced Cold Start Loading Overlay */}
             {isLoading && (
-              <div className="mt-6 p-5 bg-orange-50 border border-orange-100 rounded-2xl text-center animate-pulse">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Loader2 size={18} className="animate-spin text-orange-500" />
-                  <span className="text-sm font-bold text-orange-600">Waking up the server...</span>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-5 bg-slate-50 border border-slate-100 rounded-[2rem] relative overflow-hidden"
+              >
+                {/* Progress Bar background */}
+                <div className="absolute bottom-0 left-0 h-1 bg-orange-500/10 w-full">
+                  <motion.div
+                    initial={{ width: "0%" }}
+                    animate={{ width: "95%" }}
+                    transition={{ duration: 45, ease: "linear" }}
+                    className="h-full bg-orange-500"
+                  />
                 </div>
-                <p className="text-xs text-orange-500/80">
-                  First request may take 30-50 seconds. This is normal for free hosting. ☕
-                </p>
-              </div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center">
+                        <Loader2 size={16} className="animate-spin text-orange-500" />
+                      </div>
+                      <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest">System Booting</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-orange-500 bg-orange-50 px-3 py-1 rounded-full uppercase tracking-tighter">Est. 45s</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    {/* Rotating Facts / Messages */}
+                    <div className="min-h-[40px]">
+                      <LoadingMessage />
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-200/60">
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 bg-slate-300 rounded-full"></span>
+                        Troubleshooting
+                      </p>
+                      <ul className="text-[10px] text-slate-500 font-medium space-y-1.5 ml-3.5">
+                        <li>• Avoid refreshing for the first 60 seconds.</li>
+                        <li>• If login fails, your "Wake Signal" was still sent—try again immediately.</li>
+                        <li>• Check your internet connection if the bar stops moving.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
             )}
 
 
           </form>
 
-          <p className="mt-12 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+          <p className="mt-6 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
             {mode === 'login' ? "New candidate?" : "Already registered?"}{' '}
             <Link to={mode === 'login' ? '/signup' : '/login'} className="text-orange-500 hover:underline">
               {mode === 'login' ? 'Sign up' : 'Log in'}

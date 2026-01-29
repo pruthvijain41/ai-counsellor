@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
 from datetime import datetime
 from uuid import UUID
@@ -84,7 +84,7 @@ class ProfileBase(BaseModel):
     degree: Optional[str] = None
     major: Optional[str] = None
     graduation_year: Optional[int] = None
-    gpa: Optional[float] = None
+    gpa: Optional[float] = Field(None, le=4.0, ge=0.0)
     
     # Study Goals
     intended_degree: Optional[str] = None
@@ -136,7 +136,7 @@ class OnboardingStep1(BaseModel):
     degree: str
     major: str
     graduation_year: int
-    gpa: Optional[float] = None
+    gpa: Optional[float] = Field(None, le=4.0, ge=0.0)
 
 class OnboardingStep2(BaseModel):
     """Study Goals"""
@@ -170,7 +170,7 @@ class CompleteOnboarding(BaseModel):
     degree: str
     major: str
     graduation_year: int
-    gpa: Optional[float] = None
+    gpa: Optional[float] = Field(None, le=4.0, ge=0.0)
     # Goals
     intended_degree: str
     field_of_study: str

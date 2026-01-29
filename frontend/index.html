@@ -204,22 +204,26 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
         }
 
-        /* Custom scrollbar for a pro feel */
+        /* High-Visibility Pro Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #f8fafc;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #e2e8f0;
+            background: rgba(0, 0, 0, 0.03);
             border-radius: 10px;
         }
 
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
         ::-webkit-scrollbar-thumb:hover {
-            background: #cbd5e1;
+            background: #64748b;
+            background-clip: content-box;
         }
 
         /* Markdown Prose Styles for Chat */
@@ -335,6 +339,15 @@
             font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
             display: inline-block;
             vertical-align: middle;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
     <script type="importmap">

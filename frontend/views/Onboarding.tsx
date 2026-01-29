@@ -107,57 +107,56 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
   const examTypes = ['IELTS', 'TOEFL', 'GRE', 'GMAT'];
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-6 md:p-8 font-sans selection:bg-orange-500 selection:text-white overflow-hidden">
+    <div className="min-h-screen relative flex items-center justify-center p-4 md:p-6 font-sans selection:bg-orange-500 selection:text-white overflow-hidden">
       {/* Background Overlay to match Dashboard */}
       <div className="fixed inset-0 bg-overlay -z-10"></div>
 
       <div className="max-w-2xl w-full relative z-10">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="w-20 h-20 bg-white/60 border border-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg backdrop-blur-md">
-            <Sparkles className="w-10 h-10 text-orange-500" />
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-white/60 border border-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg backdrop-blur-md">
+            <Sparkles className="w-8 h-8 text-orange-500" />
           </div>
-          <p className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.3em] mb-2 animate-pulse">
+          <p className="text-[10px] font-bold text-orange-500 uppercase tracking-[0.3em] mb-1 animate-pulse">
             System Online • Strategy Optimized
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 bebas tracking-[0.1em] mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 bebas tracking-[0.1em] mb-1">
             AI INTELLIGENCE SETUP
           </h1>
         </div>
 
         {/* Main Card */}
-        <div className="glass-panel rounded-[3rem] p-8 md:p-12 shadow-2xl relative overflow-hidden border border-white/50">
-
+        <div className="glass-panel rounded-[2.5rem] p-6 md:p-8 shadow-2xl relative overflow-hidden border border-white/50">
           {/* Progress Indicator */}
-          <div className="flex items-center gap-2 mb-10 relative z-10">
+          <div className="flex items-center gap-2 mb-6 relative z-10">
             {steps.map((step, i) => (
               <div
                 key={step.id}
-                className={`h-2 flex-1 rounded-full transition-all duration-500 ${i <= currentStep ? 'bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]' : 'bg-white/20'
+                className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${i <= currentStep ? 'bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]' : 'bg-white/20'
                   }`}
               />
             ))}
           </div>
 
-          <div className="flex flex-col items-center text-center mb-10 relative z-10">
-            <div className="w-16 h-16 bg-white/40 shadow-xl rounded-2xl flex items-center justify-center mb-6 border border-white/50 text-orange-500 transform transition-transform duration-500 hover:scale-110 backdrop-blur-sm">
-              {React.createElement(steps[currentStep].icon, { size: 32, strokeWidth: 1.5 })}
+          <div className="flex flex-col items-center text-center mb-6 relative z-10">
+            <div className="w-14 h-14 bg-white/40 shadow-xl rounded-2xl flex items-center justify-center mb-4 border border-white/50 text-orange-500 transform transition-transform duration-500 hover:scale-110 backdrop-blur-sm">
+              {React.createElement(steps[currentStep].icon, { size: 28, strokeWidth: 1.5 })}
             </div>
-            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-[0.3em] mb-2">{steps[currentStep].subtitle}</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 bebas tracking-[0.1em] uppercase">
+            <p className="text-[8px] text-slate-500 font-bold uppercase tracking-[0.3em] mb-1">{steps[currentStep].subtitle}</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 bebas tracking-[0.1em] uppercase">
               {steps[currentStep].title}
             </h2>
           </div>
 
-          <div className="relative z-10 min-h-[300px]">
+          <div className="relative z-10 min-h-[250px]">
             {currentStep === 0 && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="form-group">
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Current Academic Level</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Current Academic Level</label>
                   <select
                     value={data.educationLevel}
                     onChange={(e) => setData({ ...data, educationLevel: e.target.value })}
-                    className="w-full p-4 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm appearance-none cursor-pointer backdrop-blur-sm"
+                    className="w-full p-3 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm appearance-none cursor-pointer backdrop-blur-sm"
                   >
                     <option>High School Graduate</option>
                     <option>Bachelors Candidate</option>
@@ -166,34 +165,46 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
                 </div>
 
                 <div className="form-group">
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Primary Field of Study</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Primary Field of Study</label>
                   <input
                     type="text"
                     value={data.major}
                     onChange={(e) => setData({ ...data, major: e.target.value })}
                     placeholder="e.g. Computer Science"
-                    className="w-full p-4 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm placeholder:text-slate-400 backdrop-blur-sm"
+                    className="w-full p-3 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm placeholder:text-slate-400 backdrop-blur-sm"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">GPA / Score</label>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">GPA / Score</label>
                     <input
-                      type="text"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="4"
                       value={data.gpa}
-                      onChange={(e) => setData({ ...data, gpa: e.target.value })}
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value);
+                        if (val > 4) {
+                          setData({ ...data, gpa: '4.0' });
+                        } else if (val < 0) {
+                          setData({ ...data, gpa: '0.0' });
+                        } else {
+                          setData({ ...data, gpa: e.target.value });
+                        }
+                      }}
                       placeholder="e.g. 3.8"
-                      className="w-full p-4 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm placeholder:text-slate-400 backdrop-blur-sm"
+                      className="w-full p-3 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm placeholder:text-slate-400 backdrop-blur-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Grad Year</label>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Grad Year</label>
                     <input
                       type="number"
                       value={data.gradYear}
                       onChange={(e) => setData({ ...data, gradYear: e.target.value })}
-                      className="w-full p-4 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm backdrop-blur-sm"
+                      className="w-full p-3 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm backdrop-blur-sm"
                     />
                   </div>
                 </div>
@@ -201,13 +212,13 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
             )}
 
             {currentStep === 1 && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Target Degree</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Target Degree</label>
                   <select
                     value={data.degree}
                     onChange={(e) => setData({ ...data, degree: e.target.value })}
-                    className="w-full p-4 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm appearance-none cursor-pointer backdrop-blur-sm"
+                    className="w-full p-3 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm appearance-none cursor-pointer backdrop-blur-sm"
                   >
                     <option>Undergraduate Program</option>
                     <option>Graduate Master's</option>
@@ -216,7 +227,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Preferred Destinations</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Preferred Destinations</label>
                   <div className="flex flex-wrap gap-2">
                     {countries.map(c => (
                       <button
@@ -228,7 +239,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
                             : [...data.preferredCountries, c];
                           setData({ ...data, preferredCountries: next });
                         }}
-                        className={`px-4 py-3 rounded-xl text-[10px] font-bold border transition-all uppercase tracking-widest ${data.preferredCountries.includes(c)
+                        className={`px-3 py-2 rounded-xl text-[10px] font-bold border transition-all uppercase tracking-widest ${data.preferredCountries.includes(c)
                           ? 'bg-slate-900 border-slate-900 text-white shadow-lg transform scale-105'
                           : 'bg-white/40 border-white/60 text-slate-500 hover:border-orange-300 hover:text-orange-500 backdrop-blur-sm'
                           }`}
@@ -242,9 +253,9 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
             )}
 
             {currentStep === 2 && (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Annual Budget (USD)</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Annual Budget (USD)</label>
                   <div className="flex items-center gap-4">
                     <div className="flex-1 relative">
                       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
@@ -252,7 +263,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
                         type="text"
                         value={data.budgetMin}
                         onChange={(e) => setData({ ...data, budgetMin: e.target.value })}
-                        className="w-full p-4 pl-8 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm backdrop-blur-sm"
+                        className="w-full p-3 pl-8 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm backdrop-blur-sm"
                       />
                     </div>
                     <span className="text-slate-400 font-bold">-</span>
@@ -262,21 +273,21 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
                         type="text"
                         value={data.budgetMax}
                         onChange={(e) => setData({ ...data, budgetMax: e.target.value })}
-                        className="w-full p-4 pl-8 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm backdrop-blur-sm"
+                        className="w-full p-3 pl-8 bg-white/40 border border-white/50 rounded-2xl outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-slate-800 text-sm backdrop-blur-sm"
                       />
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Strategic Funding</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Strategic Funding</label>
                   <div className="grid grid-cols-3 gap-3">
                     {['SELF', 'LOAN', 'AID'].map(s => (
                       <button
                         key={s}
                         type="button"
                         onClick={() => setData({ ...data, funding: s })}
-                        className={`py-4 rounded-xl border font-bold text-[10px] uppercase tracking-[0.2em] transition-all ${data.funding === s
+                        className={`py-3 rounded-xl border font-bold text-[10px] uppercase tracking-[0.2em] transition-all ${data.funding === s
                           ? 'bg-orange-500 border-orange-500 text-white shadow-lg transform scale-105'
                           : 'bg-white/40 border-white/60 text-slate-500 hover:bg-white/60 backdrop-blur-sm'
                           }`}
@@ -290,9 +301,9 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
             )}
 
             {currentStep === 3 && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 ml-1">Exam Validation</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 ml-1">Exam Validation</label>
                   <div className="grid grid-cols-2 gap-3">
                     {examTypes.map(e => (
                       <button
@@ -304,7 +315,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
                             : [...data.exams, e];
                           setData({ ...data, exams: next });
                         }}
-                        className={`p-4 rounded-xl border text-left flex items-center justify-between font-bold text-[10px] uppercase tracking-widest transition-all ${data.exams.includes(e)
+                        className={`p-3 rounded-xl border text-left flex items-center justify-between font-bold text-[10px] uppercase tracking-widest transition-all ${data.exams.includes(e)
                           ? 'bg-slate-900 border-slate-900 text-white shadow-lg'
                           : 'bg-white/40 border-white/60 text-slate-500 hover:border-orange-300 backdrop-blur-sm'
                           }`}
@@ -316,10 +327,10 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
                 </div>
 
                 {data.exams.length > 0 && (
-                  <div className="p-6 bg-white/30 rounded-[2rem] border border-white/40 animate-in fade-in slide-in-from-bottom-4 duration-500 backdrop-blur-sm">
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Verification Scores</p>
+                  <div className="p-4 bg-white/30 rounded-[2rem] border border-white/40 animate-in fade-in slide-in-from-bottom-4 duration-500 backdrop-blur-sm">
+                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-3">Verification Scores</p>
                     {data.exams.map(e => (
-                      <div key={e} className="flex items-center justify-between mb-3 last:mb-0">
+                      <div key={e} className="flex items-center justify-between mb-2 last:mb-0">
                         <span className="text-xs font-bold text-slate-700 tracking-wider">{e}</span>
                         <input
                           type="text"
@@ -334,22 +345,22 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
             )}
 
             {currentStep === 4 && (
-              <div className="flex flex-col items-center justify-center py-10 space-y-8">
+              <div className="flex flex-col items-center justify-center py-6 space-y-6">
                 <div className="relative">
                   <div className="absolute inset-0 bg-orange-500 blur-3xl opacity-20 rounded-full animate-pulse"></div>
-                  <div className="relative w-32 h-32 bg-slate-900 rounded-full flex items-center justify-center text-orange-500 shadow-2xl border-4 border-white">
-                    <Zap size={48} className="fill-current" />
+                  <div className="relative w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center text-orange-500 shadow-2xl border-4 border-white">
+                    <Zap size={36} className="fill-current" />
                   </div>
                 </div>
 
                 <div className="text-center max-w-sm">
-                  <p className="text-lg font-medium text-slate-700 leading-relaxed mb-2">
+                  <p className="text-base font-medium text-slate-700 leading-relaxed mb-1">
                     "Intelligence architecture complete. Ready to initiate global university matching sequence."
                   </p>
-                  <div className="h-1 w-20 bg-orange-500 rounded-full mx-auto my-6 opacity-30"></div>
+                  <div className="h-0.5 w-16 bg-orange-500 rounded-full mx-auto my-4 opacity-30"></div>
                   <div className="flex items-center justify-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">System Online</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">System Online</span>
                   </div>
                 </div>
               </div>
@@ -357,18 +368,18 @@ const Onboarding: React.FC<OnboardingProps> = ({ user, onComplete }) => {
           </div>
 
           {/* Navigation Actions */}
-          <div className="mt-12 flex items-center gap-4 relative z-10">
+          <div className="mt-6 flex items-center gap-4 relative z-10">
             {currentStep > 0 && (
               <button
                 onClick={back}
-                className="w-16 h-16 btn-light-refined rounded-2xl flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all active:scale-95 shadow-sm"
+                className="w-14 h-14 btn-light-refined rounded-2xl flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all active:scale-95 shadow-sm"
               >
                 <ChevronLeft size={24} />
               </button>
             )}
             <button
               onClick={next}
-              className="flex-1 h-16 bg-slate-900 text-white rounded-2xl font-bold text-[11px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-orange-600 transition-all shadow-xl shadow-slate-300/20 active:scale-95 group"
+              className="flex-1 h-14 bg-slate-900 text-white rounded-2xl font-bold text-[11px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-orange-600 transition-all shadow-xl shadow-slate-300/20 active:scale-95 group"
             >
               {currentStep === steps.length - 1 ? 'Launch Victory Engine' : 'Next Step'}
               <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />

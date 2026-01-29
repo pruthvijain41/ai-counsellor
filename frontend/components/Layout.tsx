@@ -25,9 +25,10 @@ import AppTour from './AppTour';
 interface LayoutProps {
   children: React.ReactNode;
   user: any;
+  fullWidth?: boolean;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, user }) => {
+const Layout: React.FC<LayoutProps> = ({ children, user, fullWidth = false }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [runTourManually, setRunTourManually] = useState(false);
@@ -372,7 +373,7 @@ const Layout: React.FC<LayoutProps> = ({ children, user }) => {
           </div>
         </header>
 
-        <div className="p-6 md:p-10 max-w-7xl mx-auto">
+        <div className={fullWidth ? "h-[calc(100vh-6rem)]" : "p-6 md:p-10 max-w-7xl mx-auto"}>
           {children}
         </div>
       </main>
