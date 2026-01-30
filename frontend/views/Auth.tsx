@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, ArrowRight, Github, Loader2, GraduationCap } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
 import SmartStrategy from '../components/SmartStrategy';
@@ -83,195 +83,211 @@ const Auth: React.FC<AuthProps> = ({ mode }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-stretch bg-white selection:bg-orange-500 selection:text-white font-sans">
+    <div className="min-h-screen flex items-stretch bg-white selection:bg-amber-500 selection:text-white grain overflow-hidden lexend">
       {/* Form Side */}
-      <div className="flex-1 flex flex-col justify-center px-10 md:px-24 py-10">
+      <div className="flex-1 flex flex-col justify-center px-10 md:px-24 py-6 relative z-10 overflow-y-auto lg:overflow-visible no-scrollbar">
+        <div className="absolute inset-0 -z-10 mesh-gradient opacity-20"></div>
+
         <div className="max-w-md w-full mx-auto">
           <div className="mb-6 text-center md:text-left">
-            <Link to="/" className="inline-flex items-center gap-1 mb-8">
-              <span className="text-orange-500 font-bold text-3xl bebas tracking-tighter">AI</span>
-              <span className="text-slate-900 font-bold text-3xl bebas tracking-tighter">COUNSELLOR</span>
+            <Link to="/" className="inline-flex items-center gap-1.5 mb-6 hover:scale-105 transition-transform">
+              <span className="text-amber-500 font-black text-2xl outfit tracking-tighter">AI</span>
+              <span className="text-slate-900 font-bold text-2xl outfit tracking-tighter">COUNSELLOR</span>
             </Link>
-            <h1 className="text-5xl font-bold text-slate-900 mb-4 bebas tracking-widest uppercase">
-              {mode === 'login' ? 'Welcome Back' : 'Join the Elite'}
-            </h1>
-            <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px]">
-              {mode === 'login'
-                ? 'Continue your journey to global excellence'
-                : 'Architect your academic future today'}
-            </p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 outfit tracking-tighter leading-none uppercase">
+                {mode === 'login' ? 'Welcome Back' : 'Join the Elite'}
+              </h1>
+              <p className="text-slate-400 font-bold uppercase tracking-[0.25em] text-[10px] outfit">
+                {mode === 'login'
+                  ? 'Continue your journey to global excellence'
+                  : 'Architect your academic future today'}
+              </p>
+            </motion.div>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm">
-              {error}
-            </div>
-          )}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="crystal-card p-6 md:p-8 rounded-[2.5rem] md:rounded-[3rem]"
+          >
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[10px] font-bold uppercase tracking-wider outfit">
+                {error}
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === 'signup' && (
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+            <form onSubmit={handleSubmit} className="space-y-3.5">
+              {mode === 'signup' && (
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1 outfit">Full Name</label>
+                  <div className="relative">
+                    <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                    <input
+                      type="text"
+                      required
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      placeholder="Enter your name"
+                      className="w-full pl-14 pr-6 py-3 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-semibold text-slate-900 outfit text-sm"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1 outfit">Email Address</label>
                 <div className="relative">
-                  <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                  <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                   <input
-                    type="text"
+                    type="email"
                     required
-                    value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    placeholder="Enter your name"
-                    className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-900"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="name@gmail.com"
+                    className="w-full pl-14 pr-6 py-3 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-semibold text-slate-900 outfit text-sm"
                     disabled={isLoading}
                   />
                 </div>
               </div>
-            )}
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                <input
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="name@gmail.com"
-                  className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-900"
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Secure Password</label>
-                {mode === 'login' && <a href="#" className="text-[10px] text-orange-500 font-bold uppercase tracking-widest hover:underline">Reset?</a>}
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="••••••••"
-                  className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-900"
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-4 bg-slate-900 text-white rounded-full font-bold text-[11px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-orange-600 transition-all shadow-2xl shadow-slate-200 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" /> Connecting...
-                </>
-              ) : (
-                <>
-                  {mode === 'login' ? 'Login' : 'Register'} <ArrowRight size={16} />
-                </>
-              )}
-            </button>
-
-            {/* Enhanced Cold Start Loading Overlay */}
-            {isLoading && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-5 bg-slate-50 border border-slate-100 rounded-[2rem] relative overflow-hidden"
-              >
-                {/* Progress Bar background */}
-                <div className="absolute bottom-0 left-0 h-1 bg-orange-500/10 w-full">
-                  <motion.div
-                    initial={{ width: "0%" }}
-                    animate={{ width: "95%" }}
-                    transition={{ duration: 45, ease: "linear" }}
-                    className="h-full bg-orange-500"
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1 outfit">Secure Password</label>
+                  {mode === 'login' && <a href="#" className="text-[9px] text-amber-500 font-black uppercase tracking-widest hover:underline outfit">Reset?</a>}
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="••••••••"
+                    className="w-full pl-14 pr-6 py-3 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-semibold text-slate-900 outfit text-sm"
+                    disabled={isLoading}
                   />
                 </div>
+              </div>
 
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-orange-500/10 rounded-full flex items-center justify-center">
-                        <Loader2 size={16} className="animate-spin text-orange-500" />
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-4 bg-slate-900 text-white rounded-full font-black text-[10px] uppercase tracking-[0.4em] flex items-center justify-center gap-3 hover:bg-amber-500 transition-all shadow-2xl shadow-slate-200/50 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed outfit mt-4"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" /> Synchronizing...
+                  </>
+                ) : (
+                  <>
+                    {mode === 'login' ? 'Login' : 'Register'} <ArrowRight size={16} />
+                  </>
+                )}
+              </button>
+
+              {/* Enhanced Cold Start Loading Overlay */}
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-4 p-4 bg-amber-50/50 border border-amber-100 rounded-[2rem] relative overflow-hidden"
+                >
+                  {/* Progress Bar background */}
+                  <div className="absolute bottom-0 left-0 h-1 bg-amber-500/10 w-full">
+                    <motion.div
+                      initial={{ width: "0%" }}
+                      animate={{ width: "95%" }}
+                      transition={{ duration: 45, ease: "linear" }}
+                      className="h-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+                    />
+                  </div>
+
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 bg-white shadow-sm border border-amber-100 rounded-full flex items-center justify-center">
+                          <Loader2 size={14} className="animate-spin text-amber-500" />
+                        </div>
+                        <span className="text-[9px] font-black text-slate-900 uppercase tracking-widest outfit">System Booting</span>
                       </div>
-                      <span className="text-[11px] font-black text-slate-900 uppercase tracking-widest">System Booting</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-orange-500 bg-orange-50 px-3 py-1 rounded-full uppercase tracking-tighter">Est. 45s</span>
-                  </div>
-
-                  <div className="space-y-4">
-                    {/* Rotating Facts / Messages */}
-                    <div className="min-h-[40px]">
-                      <LoadingMessage />
+                      <span className="text-[9px] font-black text-amber-500 bg-white border border-amber-100 px-3 py-1 rounded-full uppercase tracking-widest outfit">Est. 45s</span>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-200/60">
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-slate-300 rounded-full"></span>
-                        Troubleshooting
-                      </p>
-                      <ul className="text-[10px] text-slate-500 font-medium space-y-1.5 ml-3.5">
-                        <li>• Avoid refreshing for the first 60 seconds.</li>
-                        <li>• If login fails, your "Wake Signal" was still sent—try again immediately.</li>
-                        <li>• Check your internet connection if the bar stops moving.</li>
-                      </ul>
+                    <div className="space-y-4">
+                      {/* Rotating Facts / Messages */}
+                      <div className="min-h-[32px] flex items-center">
+                        <LoadingMessage />
+                      </div>
+
+                      <div className="pt-3 border-t border-amber-200/40">
+                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-1.5 flex items-center gap-2 outfit">
+                          <span className="w-1 h-1 bg-amber-300 rounded-full"></span>
+                          Diagnostics
+                        </p>
+                        <ul className="text-[8px] text-slate-500 font-bold space-y-1 ml-3 outfit opacity-80 uppercase tracking-wider">
+                          <li>• Signal sent to admission network</li>
+                          <li>• Database handshake in progress</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            )}
+                </motion.div>
+              )}
+            </form>
+          </motion.div>
 
-
-          </form>
-
-          <p className="mt-6 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+          <p className="mt-6 text-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] outfit">
             {mode === 'login' ? "New candidate?" : "Already registered?"}{' '}
-            <Link to={mode === 'login' ? '/signup' : '/login'} className="text-orange-500 hover:underline">
+            <Link to={mode === 'login' ? '/signup' : '/login'} className="text-amber-500 hover:text-amber-600 transition-colors font-black ml-1">
               {mode === 'login' ? 'Sign up' : 'Log in'}
             </Link>
           </p>
         </div>
       </div>
 
-      {/* Decorative Side - Matched Landing Aesthetic */}
-      <div className="hidden lg:block w-[45%] bg-white relative overflow-hidden border-l border-slate-100">
+      {/* Decorative Side */}
+      <div className="hidden lg:block w-[45%] bg-white relative overflow-hidden border-l border-slate-100 grain">
+        <div className="absolute inset-0 -z-10 mesh-gradient opacity-40"></div>
+
         {/* Background Giant Text */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
-          <h1 className="bebas text-[15vw] leading-none text-slate-900 select-none flex flex-col items-center">
-            <span>FUTURE</span>
-            <span>LEARN</span>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
+          <h1 className="outfit font-black text-[18vw] leading-none text-slate-900 select-none flex flex-col items-center tracking-tighter">
+            <span>DREAM</span>
+            <span>BUILD</span>
           </h1>
         </div>
 
         {/* Dynamic Visual Content */}
-        <div className="relative h-full flex flex-col items-center justify-center px-10 text-center">
-          <div className="mb-8">
+        <div className="relative h-full flex flex-col items-center justify-center px-12 text-center">
+          <div className="mb-12">
             <SmartStrategy size="md" />
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            transition={{ duration: 1, delay: 0.3 }}
           >
-            <h2 className="text-5xl font-bold mb-4 bebas tracking-[0.2em] text-slate-900">ENGINEERED SUCCESS</h2>
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] leading-loose max-w-sm mx-auto">
+            <h2 className="text-5xl font-black mb-6 outfit tracking-tighter text-slate-900 uppercase leading-[0.9]">PRECISION<br />SUCCESS</h2>
+            <div className="w-12 h-1.5 bg-amber-500 mx-auto mb-8 rounded-full"></div>
+            <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.3em] leading-loose max-w-sm mx-auto outfit opacity-80">
               Access global data networks and precision AI matching to secure your seat at the world's leading universities.
             </p>
           </motion.div>
         </div>
 
         {/* Subtle Accents */}
-        <div className="absolute top-10 right-10 w-32 h-32 border border-slate-100 rounded-full opacity-50"></div>
-        <div className="absolute bottom-10 left-10 w-48 h-48 border border-slate-50 rounded-full opacity-50"></div>
+        <div className="absolute top-12 right-12 w-40 h-40 border border-amber-100 rounded-full opacity-30"></div>
+        <div className="absolute bottom-12 left-12 w-64 h-64 border border-amber-50 rounded-full opacity-30"></div>
       </div>
     </div>
   );

@@ -6,28 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Counsellor - Future of Education</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Restoring Original Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Keeping Redesign Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Lexend:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
     <style>
         :root {
-            --accent: #FF8A00;
-            --glass-bg: rgba(255, 255, 255, 0.45);
+            --accent: #F59E0B;
+            --accent-glow: rgba(245, 158, 11, 0.3);
+            --primary: #0F172A;
+            --secondary: #475569;
+            --glass-bg: rgba(255, 255, 255, 0.7);
             --glass-border: rgba(255, 255, 255, 0.5);
-            --glass-blur: blur(20px);
-            --text-main: #1E293B;
-            --text-secondary: #64748B
+            --glass-blur: blur(24px);
+            --text-main: #0F172A;
+            --text-secondary: #475569;
+            --mesh-indigo: #4F46E5;
+            --mesh-amber: #F59E0B;
         }
 
         body {
+            /* Restored default font */
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBm52cASBHaN77mf2nfqaAIp0iM3tRzgAxgpsZTQEHwxJ8J1ncHuNiSR-w_HjiCpj_31bD0r5ib7tqh5OE5X2iX5lbcPVsAtuCu6mma6MBx43fNe-41X51Sfw5N3drmqbXkV7m29L7C8djdDOcF0yiuO18WR9RjQFfnhqwB2S3n9qz7Eg036_V70pgPOXzJLXGVQ9bvTGMI5zEYakPgu0iIsQPIeYZt0G9fRjea3bVC_R3qyi1ybFA4TWlX3lllmfDwd2PnjnU4gl8);
             background-size: cover;
-            background-attachment: fixed;
             background-position: center;
             color: #0f172a;
+            scroll-behavior: smooth;
         }
 
         .bg-overlay {
@@ -35,15 +46,33 @@
             backdrop-filter: blur(2px)
         }
 
+        /* Essential classes for Redesigned Landing/Auth */
+        .outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .lexend {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        .heading-xl {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            line-height: 0.9;
+        }
+
+        /* Restored original Bebas class */
         .bebas {
             font-family: 'Bebas Neue', cursive;
         }
 
         .glass-nav {
             background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.4);
+            will-change: transform;
         }
 
         .glass-dark {
@@ -54,15 +83,16 @@
         }
 
         .hero-bg-text {
-            color: #0f172a;
-            font-size: 28vw;
+            color: var(--primary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 25vw;
             line-height: 0.8;
-            letter-spacing: -0.05em;
-            opacity: 0.2;
+            letter-spacing: -0.06em;
+            opacity: 0.04;
             z-index: 0;
             pointer-events: none;
             user-select: none;
-            filter: blur(0.5px);
         }
 
         @media (min-width: 768px) {
@@ -76,25 +106,30 @@
             box-shadow: 0 0 80px rgba(249, 115, 22, 0.2);
         }
 
-        /* High-End Neural Engine Animations */
+        /* Animations */
         .neural-orbit {
             animation: orbit 25s linear infinite;
+            will-change: transform;
         }
 
         .neural-orbit-reverse {
             animation: orbit-reverse 35s linear infinite;
+            will-change: transform;
         }
 
         .pulse-breathing {
             animation: breathing 4s ease-in-out infinite;
+            will-change: transform;
         }
 
         .scanner-sweep {
             animation: sweep 4s linear infinite;
+            will-change: transform;
         }
 
         .float-subtle {
             animation: float-subtle 8s ease-in-out infinite;
+            will-change: transform;
         }
 
         .data-glitch {
@@ -196,12 +231,53 @@
             }
         }
 
+        .mesh-gradient {
+            background-color: #ffffff;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.05) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.1) 0px, transparent 50%);
+        }
+
+        .grain {
+            position: relative;
+        }
+
+        .grain::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.02;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3e%3cfilter id='noiseFilter'%3e%3cturbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3e%3c/filter%3e%3crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3e%3c/svg%3e");
+        }
+
+        .crystal-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            will-change: transform, opacity;
+        }
+
+        .crystal-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent);
+        }
+
         .mist-overlay {
-            background: linear-gradient(to bottom, transparent 0%, white 95%);
+            background: linear-gradient(to bottom, transparent 0%, white 100%);
         }
 
         .capsule-shadow {
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 60px -20px rgba(15, 23, 42, 0.15);
         }
 
         /* High-Visibility Pro Scrollbar */
@@ -226,7 +302,7 @@
             background-clip: content-box;
         }
 
-        /* Markdown Prose Styles for Chat */
+        /* Markdown Prose Styles */
         .prose h1 {
             font-size: 1.25rem;
             font-weight: 700;

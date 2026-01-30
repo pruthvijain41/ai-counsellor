@@ -156,7 +156,7 @@ const Layout: React.FC<LayoutProps> = ({ children, user, fullWidth = false }) =>
   }, [isLocked, currentPath, navigate]);
 
   return (
-    <div className="flex h-screen bg-transparent overflow-hidden selection:bg-orange-500 selection:text-white relative">
+    <div className="flex h-screen bg-transparent overflow-hidden selection:bg-amber-500 selection:text-white relative lexend">
       <AppTour
         runManually={runTourManually}
         onFinish={() => setRunTourManually(false)}
@@ -175,8 +175,9 @@ const Layout: React.FC<LayoutProps> = ({ children, user, fullWidth = false }) =>
         lg:translate-x-0 lg:static lg:inset-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="flex items-center gap-3 mb-8">
-          <h1 className="font-display font-extrabold text-lg tracking-[0.2em] text-slate-800 uppercase bebas">AI COUNCELLOR</h1>
+        <div className="flex items-center gap-1.5 mb-8">
+          <span className="text-amber-500 font-black text-2xl outfit tracking-tighter">AI</span>
+          <span className="text-slate-800 font-bold text-2xl outfit tracking-tighter">COUNSELLOR</span>
         </div>
 
         {/* Lock Warning Banner */}
@@ -233,7 +234,7 @@ const Layout: React.FC<LayoutProps> = ({ children, user, fullWidth = false }) =>
                 to={item.path}
                 onClick={() => setIsSidebarOpen(false)}
                 className={({ isActive }) => `
-                  flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300
+                  flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300 outfit
                   tour-${item.path.replace('/', '')}
                   ${isActive
                     ? 'bg-white/60 border border-white/80 shadow-sm text-[var(--accent)]'
@@ -292,10 +293,10 @@ const Layout: React.FC<LayoutProps> = ({ children, user, fullWidth = false }) =>
         {/* Header */}
         <header className="sticky top-0 z-30 w-full h-24 bg-white/40 backdrop-blur-md border-b border-white/30 flex items-center justify-between px-6 md:px-10">
           <div>
-            <h2 className="text-[10px] font-bold text-[var(--accent)] tracking-[0.3em] uppercase mb-1">
+            <h2 className="text-[10px] font-bold text-[var(--accent)] tracking-[0.3em] uppercase mb-1 outfit">
               {currentTitle === 'Dashboard' ? 'Overview' : currentTitle}
             </h2>
-            <p className="text-2xl font-display font-bold text-slate-800">
+            <p className="text-2xl font-bold text-slate-800 outfit">
               {currentTitle === 'Dashboard' ? 'Student Workspace' : `${currentTitle} Protocol`}
             </p>
           </div>
