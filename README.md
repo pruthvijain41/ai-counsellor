@@ -1,167 +1,173 @@
-# AI Counsellor - Study Abroad Platform
+<div align="center">
 
-A guided, stage-based platform to help students make confident study-abroad decisions.
+# 🎓 AI Counsellor
 
-## Project Structure
+### Intelligent Study-Abroad Advisory Platform
+
+An AI-powered platform that guides students through their entire university application journey — from profile building to application tracking — with an agentic AI counsellor that understands context and takes actions.
+
+[![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![Groq](https://img.shields.io/badge/Groq_LLM-F55036?style=for-the-badge&logo=groq&logoColor=white)](https://groq.com)
+
+[**Live Demo →**](https://ai-counsellor-kappa.vercel.app/#/)
+
+</div>
+
+---
+
+## ✨ What Makes This Different
+
+- **Agentic AI Counsellor** — Not just a chatbot. The AI parses user intent, extracts structured actions (lock a university, create a task, search for schools), and executes them *within the system* in real-time.
+- **Dynamic Match Scoring** — Universities are ranked with personalized probability-fit scores based on GPA, test scores, budget, and preferred destinations — automatically classified into Dream / Target / Safe tiers.
+- **Intelligent Task Generation** — Locking a university triggers automatic creation of a tailored application checklist (SOP, transcripts, forms, recommendations) with priority deadlines.
+- **Profile-Gated Progression** — Stage-based journey (Discovery → Shortlist → Application → Departure) with profile strength analysis that gates access to advanced features.
+- **Glassmorphism Design System** — Premium UI with translucent panels, vibrant gradients, and smooth Framer Motion animations.
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 19 · TypeScript · Vite · Tailwind CSS · Zustand · Framer Motion |
+| **Backend** | FastAPI · SQLAlchemy · Pydantic v2 · Python 3.10+ |
+| **AI Engine** | Groq API (Llama-3.3-70b-versatile) · Custom prompt engineering · Action extraction pipeline |
+| **Database** | PostgreSQL with UUID primary keys · Relational schema with cascading deletes |
+| **Auth** | JWT (python-jose) · bcrypt password hashing |
+| **Deployment** | Vercel (frontend) · Render (backend) · CI/CD via Git |
+
+---
+
+## 🏗 Architecture Overview
 
 ```
-AI Counsellor/
-├── frontend/          # Next.js 14 frontend
-│   ├── src/
-│   │   ├── app/       # App router pages
-│   │   ├── components/
-│   │   ├── lib/       # API utilities
-│   │   └── store/     # Zustand state
-│   └── ...
-├── backend/           # FastAPI backend
-│   ├── routers/       # API endpoints
-│   ├── services/      # Business logic
-│   ├── models.py      # SQLAlchemy models
-│   └── ...
-└── README.md
+┌─────────────────────────────────────────────────┐
+│                   Frontend (Vercel)              │
+│  React 19 + Vite + TypeScript + Zustand Stores  │
+│  Views: Landing · Auth · Onboarding · Dashboard │
+│         Discovery · Shortlist · Tracker · Chat  │
+└─────────────────┬───────────────────────────────┘
+                  │ REST API (Axios)
+┌─────────────────▼───────────────────────────────┐
+│                  Backend (Render)                │
+│           FastAPI + SQLAlchemy ORM               │
+│  Routers: auth · profile · universities · ai    │
+│  Services: ai_engine · university_service        │
+└──────┬──────────────────────┬───────────────────┘
+       │                      │
+┌──────▼──────┐     ┌────────▼────────┐
+│ PostgreSQL  │     │  Groq API       │
+│ (Database)  │     │  Llama-3.3-70b  │
+└─────────────┘     └────────┬────────┘
+                             │
+                    ┌────────▼────────┐
+                    │  HiPolabs API   │
+                    │ (University DB) │
+                    └─────────────────┘
 ```
 
-## Tech Stack
+> 📖 **For a deep technical breakdown, see [ARCHITECTURE.md](./ARCHITECTURE.md)**
 
-- **Frontend**: Next.js 14 (App Router), Tailwind CSS, Zustand
-- **Backend**: FastAPI, SQLAlchemy, PostgreSQL
-- **AI**: Google Gemini Pro
-- **External API**: HiPolabs Universities API
+---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+
-- Python 3.10+
-- PostgreSQL database
+- **Node.js** 18+ &nbsp;·&nbsp; **Python** 3.10+ &nbsp;·&nbsp; **PostgreSQL** database
 
-### Backend Setup
+### Backend
 
-1. Navigate to backend directory:
 ```bash
 cd backend
-```
-
-2. Create virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-```
 
-4. Configure environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your database URL and Gemini API key
-```
+# Configure environment
+cp .env.example .env    # Edit with your DATABASE_URL, JWT_SECRET, GROQ_API_KEY
 
-5. Initialize database:
-```bash
-python init_db.py
-```
-
-6. Start the server:
-```bash
+python init_db.py       # Initialize database tables
 uvicorn main:app --reload --port 8000
 ```
 
-### Frontend Setup
+### Frontend
 
-1. Navigate to frontend directory:
 ```bash
 cd frontend
-```
-
-2. Install dependencies:
-```bash
 npm install
+npm run dev             # Opens at http://localhost:3000
 ```
 
-3. Start development server:
-```bash
-npm run dev
+---
+
+## 📁 Project Structure
+
+```
+AI Counsellor/
+├── frontend/                   # React 19 + Vite + TypeScript
+│   ├── views/                  # Page components
+│   │   ├── Landing.tsx         #   Marketing landing page
+│   │   ├── Auth.tsx            #   Login / Signup
+│   │   ├── Onboarding.tsx      #   4-step profile builder
+│   │   ├── Dashboard.tsx       #   Central hub with metrics
+│   │   ├── Discovery.tsx       #   University search + AI recommendations
+│   │   ├── Shortlist.tsx       #   Manage & compare universities
+│   │   ├── Tracker.tsx         #   Application task management
+│   │   ├── Chat.tsx            #   AI counsellor conversation
+│   │   └── Profile.tsx         #   Full profile editor
+│   ├── components/             # Reusable UI components
+│   │   ├── Layout.tsx          #   App shell + navigation
+│   │   ├── SmartStrategy.tsx   #   Strategy recommendations widget
+│   │   └── AppTour.tsx         #   Guided onboarding tour
+│   ├── store/                  # Zustand state management
+│   │   ├── authStore.ts        #   Authentication state + JWT
+│   │   ├── universityStore.ts  #   University data + shortlist
+│   │   └── taskStore.ts        #   Task management state
+│   └── services/               # API client layer
+│
+├── backend/                    # FastAPI + Python
+│   ├── main.py                 # App entry point + CORS + lifespan
+│   ├── models.py               # SQLAlchemy ORM models
+│   ├── schemas.py              # Pydantic request/response schemas
+│   ├── routers/                # API endpoint handlers
+│   │   ├── auth.py             #   JWT signup/login/me
+│   │   ├── profile.py          #   Profile CRUD + onboarding
+│   │   ├── universities.py     #   Search, recommend, shortlist, lock
+│   │   ├── ai.py               #   Chat, profile analysis, next steps
+│   │   └── tasks.py            #   CRUD + auto-generation on lock
+│   └── services/               # Business logic layer
+│       ├── ai_engine.py        #   Groq integration + action pipeline
+│       └── university_service.py  # HiPolabs API + match scoring
+│
+├── ARCHITECTURE.md             # Full technical documentation
+└── README.md                   # ← You are here
 ```
 
-4. Open http://localhost:3000
+---
 
-## Features
+## 🎯 Core Features
 
-### Core Flow
+| Feature | Description |
+|---|---|
+| **AI Counsellor Chat** | Context-aware assistant powered by Llama-3.3-70b that can search universities, lock schools, and create tasks directly from conversation |
+| **University Discovery** | Smart matching engine with probability-fit scores, tiered classification (Dream/Target/Safe), and personalized admission analysis |
+| **Strategic Shortlisting** | Compare shortlisted universities with AI-enriched data (tuition estimates, acceptance rates, scholarship probabilities) |
+| **Application Tracker** | Auto-generated checklists when universities are locked — SOP, transcripts, forms, recommendations with deadline tracking |
+| **Profile Intelligence** | Real-time profile strength analysis with visual tiers and actionable recommendations to improve readiness |
+| **Guided Onboarding** | 4-step wizard + interactive app tour capturing academics, goals, budget, and exam readiness |
+| **Stage Progression** | Journey phases (Discovery → Shortlist → Application → Departure) with profile-gated access to advanced tools |
 
-1. **Landing Page** - Product overview and CTAs
-2. **Authentication** - Signup/Login with JWT
-3. **Onboarding** - 4-step profile building
-4. **Dashboard** - Stage tracking and profile strength
-5. **AI Counsellor** - Chat-based guidance
-6. **Discovery** - University search and recommendations
-7. **Shortlist** - Save and compare universities
-8. **Locking** - Commit to universities
-9. **Application** - Task tracking and guidance
+---
 
-### AI Features
-
-- Profile strength analysis
-- Personalized university recommendations
-- Dream/Target/Safe classification
-- Chat-based counselling
-- Automated task generation
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/signup` - Create account
-- `POST /api/auth/login` - Login
-- `GET /api/auth/me` - Get current user
-
-### Profile
-- `GET /api/profile` - Get profile
-- `PUT /api/profile` - Update profile
-- `POST /api/profile/complete-onboarding` - Complete onboarding
-
-### Universities
-- `GET /api/universities/search?country=` - Search universities
-- `GET /api/universities/recommendations` - Get recommendations
-- `POST /api/universities/shortlist` - Add to shortlist
-- `POST /api/universities/lock/{id}` - Lock university
-- `POST /api/universities/unlock/{id}` - Unlock university
-
-### AI
-- `POST /api/ai/chat` - Chat with counsellor
-- `GET /api/ai/analyze-profile` - Profile analysis
-- `GET /api/ai/next-steps` - Get next steps
-
-### Tasks
-- `GET /api/tasks` - Get all tasks
-- `POST /api/tasks` - Create task
-- `PUT /api/tasks/{id}` - Update task
-- `POST /api/tasks/generate` - Generate tasks
-
-## Environment Variables
-
-### Backend (.env)
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/ai_counsellor
-JWT_SECRET=your-secret-key
-GEMINI_API_KEY=your-gemini-api-key
-```
-
-### Frontend (.env.local)
-```
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
-
-## Database Schema
-
-- **users** - User accounts
-- **profiles** - User profiles with onboarding data
-- **shortlists** - Shortlisted universities
-- **tasks** - Application tasks
-
-## License
+## 📄 License
 
 MIT
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ by <a href="https://github.com/pruthvijain41">Pruthvi</a></sub>
+</div>
